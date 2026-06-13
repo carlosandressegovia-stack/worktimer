@@ -2,1941 +2,679 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#eef2f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Workout Timer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --glass-bg: rgba(255,255,255,0.18);
-  --glass-bg-strong: rgba(255,255,255,0.28);
-  --glass-border: rgba(255,255,255,0.45);
-  --glass-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 0 rgba(255,255,255,0.35) inset;
-  --glass-shadow-sm: 0 4px 16px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.3) inset;
-  --blur: blur(24px) saturate(180%);
-  --blur-sm: blur(12px) saturate(160%);
-  --accent: #30d158;
-  --accent2: #0a84ff;
-  --accent3: #ff6b35;
-  --danger: #ff453a;
-  --text: #1a1a2e;
-  --text-soft: rgba(26,26,46,0.6);
-  --text-white: rgba(255,255,255,0.95);
-  --text-white-soft: rgba(255,255,255,0.6);
-  --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 26px;
-  --radius-xl: 36px;
-  --font: 'Outfit', sans-serif;
+  --bg-1: #eef2f7;
+  --bg-2: #f7f9fc;
+  --card: #ffffff;
+  --card-soft: #f4f6fa;
+  --border: rgba(15,23,42,0.08);
+  --border-strong: rgba(15,23,42,0.14);
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.04);
+  --shadow-md: 0 2px 6px rgba(15,23,42,0.05), 0 12px 32px rgba(15,23,42,0.06);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,0.10), 0 24px 60px rgba(15,23,42,0.10);
+
+  --accent: #10b981;
+  --accent-dk: #059669;
+  --accent-soft: rgba(16,185,129,0.12);
+  --accent-line: rgba(16,185,129,0.28);
+  --rest: #3b82f6;
+  --rest-soft: rgba(59,130,246,0.12);
+  --rest-line: rgba(59,130,246,0.28);
+  --danger: #ef4444;
+  --danger-soft: rgba(239,68,68,0.10);
+  --danger-line: rgba(239,68,68,0.25);
+
+  --text: #0f172a;
+  --text-soft: #64748b;
+  --text-faint: #94a3b8;
+
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 30px;
+  --font: 'Outfit', -apple-system, sans-serif;
 }
 
-html, body {
-  height: 100%;
-  font-family: var(--font);
-  overflow: hidden;
-}
-
+html, body { height: 100%; }
 body {
-  background: linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 70%, #0f3460 100%);
-  min-height: 100vh;
-  position: relative;
-}
-
-/* Orbs de fondo */
-body::before {
-  content: '';
-  position: fixed;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(48,209,88,0.25) 0%, transparent 70%);
-  top: -200px; right: -200px;
-  border-radius: 50%;
-  pointer-events: none;
-  animation: orbFloat 8s ease-in-out infinite;
-}
-body::after {
-  content: '';
-  position: fixed;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(10,132,255,0.2) 0%, transparent 70%);
-  bottom: -150px; left: -150px;
-  border-radius: 50%;
-  pointer-events: none;
-  animation: orbFloat 10s ease-in-out infinite reverse;
-}
-@keyframes orbFloat {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50% { transform: translate(30px,-30px) scale(1.05); }
-}
-
-/* ══════════ APP SHELL ══════════ */
-#app {
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  max-width: 480px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-/* ══════════ SCREENS ══════════ */
-.screen {
-  display: none;
-  flex-direction: column;
-  flex: 1;
+  font-family: var(--font);
+  color: var(--text);
+  background: linear-gradient(168deg, var(--bg-1) 0%, var(--bg-2) 55%, #eaf4f0 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   overflow: hidden;
-  animation: fadeIn 0.3s ease;
 }
-.screen.active { display: flex; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.screen-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 16px 100px;
-  scrollbar-width: none;
+button, input, select, textarea { font-family: var(--font); }
+input, textarea, select { -webkit-appearance: none; }
+
+.app-shell { display: flex; height: 100dvh; width: 100%; }
+
+.sidebar {
+  display: none; flex-direction: column; width: 250px; flex-shrink: 0; padding: 28px 18px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-right: 1px solid var(--border);
 }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 12px 28px; }
+.sidebar-logo .mark { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-dk)); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 6px 16px rgba(16,185,129,0.35); }
+.sidebar-logo .mark svg { width: 20px; height: 20px; }
+.sidebar-logo .name { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.sidebar .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r-md); color: var(--text-soft); cursor: pointer; font-weight: 600; transition: background .18s, color .18s; user-select: none; }
+.sidebar .nav-item svg { width: 21px; height: 21px; flex-shrink: 0; }
+.sidebar .nav-item:hover { background: rgba(15,23,42,0.04); color: var(--text); }
+.sidebar .nav-item.active { background: var(--accent-soft); color: var(--accent-dk); }
+.sidebar .nav-label { font-size: 15px; }
+
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+.main-inner { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; overflow: hidden; }
+
+.screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+.screen.active { display: flex; animation: fade .25s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.screen-body { flex: 1; overflow-y: auto; padding: 0 18px 110px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .screen-body::-webkit-scrollbar { display: none; }
 
-/* ══════════ GLASS CARD ══════════ */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  border-radius: var(--radius-lg);
-}
-.glass-sm {
-  background: var(--glass-bg);
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow-sm);
-  border-radius: var(--radius-md);
-}
-.glass-strong {
-  background: var(--glass-bg-strong);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  border-radius: var(--radius-lg);
-}
+.topbar { padding: max(20px, env(safe-area-inset-top)) 20px 14px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-title { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; }
+.topbar-sub { font-size: 13px; color: var(--text-soft); margin-top: 1px; }
 
-/* ══════════ TOP BAR ══════════ */
-.topbar {
-  padding: 56px 20px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-.topbar-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -0.5px;
-}
-.topbar-sub {
-  font-size: 13px;
-  color: var(--text-white-soft);
-  font-weight: 400;
-  margin-top: 2px;
-}
-.icon-btn {
-  width: 40px; height: 40px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  color: var(--text-white);
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-.icon-btn:hover { background: var(--glass-bg-strong); transform: scale(1.05); }
-.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn { width: 42px; height: 42px; flex-shrink: 0; background: var(--card); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); box-shadow: var(--shadow-sm); transition: transform .15s; }
+.icon-btn:active { transform: scale(0.92); }
+.icon-btn svg { width: 19px; height: 19px; }
 
-/* ══════════ BOTTOM NAV ══════════ */
-.bottom-nav {
-  position: fixed;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  padding: 0 16px 28px;
-  z-index: 100;
-}
-.nav-bar {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 -1px 0 rgba(255,255,255,0.2) inset, 0 8px 32px rgba(0,0,0,0.3);
-  border-radius: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 10px 8px;
-}
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  cursor: pointer;
-  padding: 6px 16px;
-  border-radius: 18px;
-  transition: all 0.2s;
-  color: var(--text-white-soft);
-  min-width: 60px;
-}
-.nav-item.active {
-  background: rgba(48,209,88,0.2);
-  color: var(--accent);
-}
-.nav-item svg { width: 22px; height: 22px; }
-.nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); }
 
-/* ══════════ SCREEN: HOME ══════════ */
-.greeting-card {
-  padding: 20px 22px;
-  margin-bottom: 16px;
-}
-.greeting-text {
-  font-size: 15px;
-  color: var(--text-white-soft);
-  font-weight: 400;
-  margin-bottom: 4px;
-}
-.greeting-name {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -0.3px;
-}
-.streak-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-.streak-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(48,209,88,0.15);
-  border: 1px solid rgba(48,209,88,0.3);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-}
-.streak-pill svg { width: 14px; height: 14px; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 0 14px calc(14px + env(safe-area-inset-bottom)); z-index: 100; pointer-events: none; }
+.nav-bar { pointer-events: auto; max-width: 460px; margin: 0 auto; background: rgba(255,255,255,0.72); backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%); border: 1px solid var(--border); box-shadow: var(--shadow-md); border-radius: 26px; display: flex; align-items: center; justify-content: space-around; padding: 9px 6px; }
+.nav-bar .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 14px; border-radius: 16px; cursor: pointer; color: var(--text-faint); transition: background .18s, color .18s; min-width: 58px; user-select: none; }
+.nav-bar .nav-item svg { width: 22px; height: 22px; }
+.nav-bar .nav-item.active { background: var(--accent-soft); color: var(--accent-dk); }
+.nav-bar .nav-label { font-size: 10px; font-weight: 600; letter-spacing: .2px; }
 
-.section-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-white-soft);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin: 20px 0 10px;
-  padding: 0 4px;
-}
+.hero { padding: 22px 24px; margin-bottom: 16px; background: linear-gradient(135deg, #ffffff, #f4faf7); }
+.hero-hi { font-size: 14px; color: var(--text-soft); font-weight: 500; }
+.hero-q { font-size: 23px; font-weight: 700; letter-spacing: -0.4px; margin-top: 2px; }
+.hero-pills { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent-dk); border-radius: 14px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; }
+.pill svg { width: 14px; height: 14px; }
+.pill.rest { background: var(--rest-soft); border-color: var(--rest-line); color: var(--rest); }
 
-.rutina-card {
-  padding: 18px 20px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.25s;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.rutina-card:hover { transform: translateY(-2px); background: var(--glass-bg-strong); }
-.rutina-card:active { transform: scale(0.98); }
-.rutina-info { flex: 1; }
-.rutina-name {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-white);
-  margin-bottom: 4px;
-}
-.rutina-meta {
-  font-size: 12px;
-  color: var(--text-white-soft);
-  font-weight: 400;
-}
-.rutina-arrow {
-  width: 32px; height: 32px;
-  background: rgba(48,209,88,0.2);
-  border: 1px solid rgba(48,209,88,0.3);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-.rutina-arrow svg { width: 16px; height: 16px; }
+.section-label { font-size: 12px; font-weight: 700; color: var(--text-faint); letter-spacing: 1px; text-transform: uppercase; margin: 20px 4px 10px; }
 
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-white-soft);
-}
-.empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
-.empty-state p { font-size: 14px; font-weight: 400; }
+.rutina-card { padding: 16px 18px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: transform .18s, box-shadow .18s, border-color .18s; }
+.rutina-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); transform: translateY(-1px); }
+.rutina-card:active { transform: scale(0.985); }
+.rutina-emoji { width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.rutina-info { flex: 1; min-width: 0; }
+.rutina-name { font-size: 16.5px; font-weight: 600; }
+.rutina-meta { font-size: 12.5px; color: var(--text-soft); margin-top: 2px; }
+.rutina-go { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--accent), var(--accent-dk)); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 4px 12px rgba(16,185,129,0.4); }
+.rutina-go svg { width: 15px; height: 15px; }
 
-/* ══════════ SCREEN: TIMER ══════════ */
-#screen-timer .topbar { padding-top: 56px; }
+.empty { text-align: center; padding: 48px 24px; color: var(--text-faint); }
+.empty svg { width: 44px; height: 44px; margin-bottom: 12px; opacity: .5; }
+.empty p { font-size: 14px; line-height: 1.5; }
 
-.timer-header {
-  text-align: center;
-  padding: 0 20px 20px;
-}
-.timer-rutina-name {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -0.3px;
-}
-.timer-set-badge {
-  display: inline-block;
-  background: rgba(10,132,255,0.2);
-  border: 1px solid rgba(10,132,255,0.35);
-  color: #64b5ff;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 3px 12px;
-  border-radius: 20px;
-  margin-top: 6px;
-}
+.timer-wrap { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+.ring-box { position: relative; width: 260px; height: 260px; margin: 8px 0 18px; }
+.ring-box svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(15,23,42,0.07); stroke-width: 14; }
+.ring-fg { fill: none; stroke: var(--accent); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.ring-fg.rest { stroke: var(--rest); }
+.ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 30px; }
+.ring-count { font-size: 58px; font-weight: 700; letter-spacing: -2.5px; line-height: 1; font-variant-numeric: tabular-nums; }
+.ring-ej { font-size: 14px; font-weight: 500; color: var(--text-soft); margin-top: 6px; line-height: 1.3; }
+.ring-tag { margin-top: 8px; font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 3px 10px; border-radius: 10px; }
+.ring-tag.work { background: var(--accent-soft); color: var(--accent-dk); }
+.ring-tag.rest { background: var(--rest-soft); color: var(--rest); }
 
-.timer-ring-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 10px 20px 20px;
-}
-.timer-ring-container {
-  position: relative;
-  width: 240px; height: 240px;
-}
-.timer-ring-container svg {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  transform: rotate(-90deg);
-}
-.ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
-.ring-progress {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 8;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 1s linear, stroke 0.3s;
-  filter: drop-shadow(0 0 8px rgba(48,209,88,0.6));
-}
-.ring-progress.rest { stroke: var(--accent2); filter: drop-shadow(0 0 8px rgba(10,132,255,0.6)); }
-.timer-ring-inner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.timer-countdown {
-  font-size: 54px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -2px;
-  line-height: 1;
-}
-.timer-ejercicio-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-white-soft);
-  text-align: center;
-  padding: 0 20px;
-  margin-top: 4px;
-  max-width: 160px;
-}
+.next-card { width: 100%; padding: 14px 18px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.next-lbl { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); }
+.next-name { font-size: 15px; font-weight: 600; margin-top: 2px; }
+.next-dur { font-size: 18px; font-weight: 700; color: var(--accent-dk); font-variant-numeric: tabular-nums; }
 
-.timer-ejercicio-card {
-  margin: 0 20px 16px;
-  padding: 16px 20px;
-  text-align: center;
-}
-.timer-ej-actual {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -0.3px;
-  margin-bottom: 4px;
-}
-.timer-ej-siguiente {
-  font-size: 13px;
-  color: var(--text-white-soft);
-}
-.timer-ej-siguiente span {
-  color: var(--accent);
-  font-weight: 600;
-}
+.prog-wrap { width: 100%; margin-bottom: 16px; }
+.prog-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-soft); font-weight: 600; margin-bottom: 7px; }
+.prog-bar { height: 7px; background: rgba(15,23,42,0.07); border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--rest), var(--accent)); border-radius: 4px; transition: width .4s ease; }
 
-.timer-progress-bar-wrap {
-  padding: 0 20px 16px;
-}
-.timer-progress-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-white-soft);
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-.timer-progress-bar {
-  height: 6px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.timer-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent2), var(--accent));
-  border-radius: 3px;
-  transition: width 1s linear;
-}
+.controls { display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 18px; }
+.ctrl { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; transition: transform .15s; }
+.ctrl:active { transform: scale(0.9); }
+.ctrl svg { width: 24px; height: 24px; }
+.ctrl.main { width: 76px; height: 76px; border: none; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-dk)); box-shadow: 0 8px 24px rgba(16,185,129,0.45); }
+.ctrl.main svg { width: 30px; height: 30px; }
 
-.timer-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 0 20px 16px;
-}
-.btn-control {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-  font-family: var(--font);
-}
-.btn-control.secondary {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: var(--text-white);
-}
-.btn-control.secondary:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
-.btn-control.primary {
-  width: 70px; height: 70px;
-  background: linear-gradient(135deg, var(--accent), #25a244);
-  box-shadow: 0 4px 20px rgba(48,209,88,0.5);
-  color: white;
-}
-.btn-control.primary:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(48,209,88,0.65); }
-.btn-control svg { width: 24px; height: 24px; }
-.btn-control.primary svg { width: 30px; height: 30px; }
+.queue { width: 100%; padding: 14px 16px; }
+.queue-lbl { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
+.q-item { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.q-item:last-child { border-bottom: none; }
+.q-item.done { opacity: .4; }
+.q-item.up { opacity: .7; }
+.q-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--text-faint); }
+.q-dot.work { background: var(--accent); }
+.q-dot.rest { background: var(--rest); }
+.q-name { flex: 1; font-size: 13.5px; font-weight: 500; }
+.q-time { font-size: 12.5px; font-weight: 600; color: var(--text-soft); font-variant-numeric: tabular-nums; }
 
-.timer-queue {
-  margin: 0 20px 16px;
-  padding: 14px 16px;
-}
-.queue-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-white-soft);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.queue-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.queue-item:last-child { border-bottom: none; }
-.queue-item.current { opacity: 1; }
-.queue-item.done { opacity: 0.35; }
-.queue-item.upcoming { opacity: 0.6; }
-.queue-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.queue-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-.queue-dot.rest-dot { background: var(--accent2); }
-.queue-dot.done-dot { background: rgba(255,255,255,0.3); }
-.queue-dot.up-dot { background: rgba(255,255,255,0.2); }
-.queue-item-name {
-  flex: 1;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-white);
-}
-.queue-item-time {
-  font-size: 12px;
-  color: var(--text-white-soft);
-  font-weight: 600;
-}
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.stat { padding: 16px 18px; }
+.stat-val { font-size: 28px; font-weight: 700; letter-spacing: -1px; line-height: 1; color: var(--accent-dk); font-variant-numeric: tabular-nums; }
+.stat-lbl { font-size: 12px; color: var(--text-soft); margin-top: 5px; }
 
-/* ══════════ SCREEN: HISTORIAL ══════════ */
-.stats-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.stat-card {
-  padding: 16px 18px;
-}
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -1px;
-  line-height: 1;
-}
-.stat-label {
-  font-size: 12px;
-  color: var(--text-white-soft);
-  font-weight: 400;
-  margin-top: 4px;
-}
-.stat-accent { color: var(--accent); }
+.hist { padding: 14px 16px; margin-bottom: 9px; display: flex; align-items: center; gap: 13px; }
+.hist-ico { width: 42px; height: 42px; border-radius: 13px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.hist-info { flex: 1; min-width: 0; }
+.hist-name { font-size: 15px; font-weight: 600; }
+.hist-date { font-size: 12px; color: var(--text-soft); margin-top: 1px; }
+.hist-note { font-size: 11.5px; color: var(--text-faint); font-style: italic; margin-top: 2px; }
+.hist-dur { font-size: 14px; font-weight: 700; color: var(--accent-dk); flex-shrink: 0; }
 
-.hist-item {
-  padding: 14px 18px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.hist-dot {
-  width: 42px; height: 42px;
-  border-radius: 14px;
-  background: rgba(48,209,88,0.15);
-  border: 1px solid rgba(48,209,88,0.25);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  font-size: 18px;
-}
-.hist-info { flex: 1; }
-.hist-rutina {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-white);
-  margin-bottom: 3px;
-}
-.hist-fecha {
-  font-size: 12px;
-  color: var(--text-white-soft);
-}
-.hist-duracion {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
-}
-.hist-notas {
-  font-size: 11px;
-  color: var(--text-white-soft);
-  font-style: italic;
-  margin-top: 2px;
-}
+.cal-nav { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 14px; }
+.cal-month { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; text-transform: capitalize; }
+.cal-card { padding: 18px; margin-bottom: 14px; }
+.cal-head { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 8px; }
+.cal-head div { text-align: center; font-size: 11px; font-weight: 700; color: var(--text-faint); }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; }
+.cal-cell { aspect-ratio: 1; border-radius: 11px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; border: 1px solid transparent; }
+.cal-num { font-size: 13px; font-weight: 500; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+.cal-cell.off .cal-num { color: var(--text-faint); opacity: .5; }
+.cal-cell.has { background: var(--accent-soft); border-color: var(--accent-line); cursor: pointer; }
+.cal-cell.has .cal-num { color: var(--accent-dk); font-weight: 700; }
+.cal-cell.today { box-shadow: inset 0 0 0 2px var(--rest); }
+.cal-cell.today .cal-num { color: var(--rest); font-weight: 700; }
+.cal-d { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 
-/* ══════════ SCREEN: CALENDARIO ══════════ */
-.cal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 16px;
-}
-.cal-month {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -0.3px;
-}
-.cal-card {
-  margin: 0 16px 16px;
-  padding: 20px;
-}
-.cal-days-header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  margin-bottom: 10px;
-}
-.cal-day-header {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-white-soft);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  padding: 4px 0;
-}
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-.cal-cell {
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  position: relative;
-  cursor: default;
-}
-.cal-cell-num {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-white-soft);
-  line-height: 1;
-}
-.cal-cell.has-workout {
-  background: rgba(48,209,88,0.15);
-  border: 1px solid rgba(48,209,88,0.25);
-  cursor: pointer;
-}
-.cal-cell.has-workout .cal-cell-num { color: var(--accent); font-weight: 700; }
-.cal-cell.today {
-  background: rgba(10,132,255,0.2);
-  border: 1px solid rgba(10,132,255,0.4);
-}
-.cal-cell.today .cal-cell-num { color: #64b5ff; font-weight: 700; }
-.cal-cell.other-month .cal-cell-num { opacity: 0.25; }
-.cal-dot {
-  width: 4px; height: 4px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-top: 2px;
-}
-
-.cal-detail {
-  margin: 0 16px 16px;
-  padding: 16px 20px;
-}
-.cal-detail-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-white-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 12px;
-}
-.cal-detail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
+.cal-detail { padding: 16px 18px; }
+.cal-detail-t { font-size: 12px; font-weight: 700; letter-spacing: .8px; color: var(--text-faint); margin-bottom: 12px; text-transform: capitalize; }
+.cal-detail-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
 .cal-detail-item:last-child { border-bottom: none; }
 
-/* ══════════ SCREEN: EDITOR ══════════ */
-.editor-rutina-select {
-  margin: 0 16px 16px;
-}
-.form-group { margin-bottom: 14px; }
-.form-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-white-soft);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 6px;
-}
-.form-input {
-  width: 100%;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-white);
-  outline: none;
-  transition: border-color 0.2s, background 0.2s;
-}
-.form-input::placeholder { color: rgba(255,255,255,0.3); }
-.form-input:focus {
-  border-color: rgba(48,209,88,0.5);
-  background: rgba(255,255,255,0.15);
-}
-.form-input option { background: #302b63; color: white; }
-.form-select { cursor: pointer; appearance: none; }
+.form-g { margin-bottom: 14px; }
+.form-lbl { font-size: 11.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); display: block; margin-bottom: 7px; }
+.inp { width: 100%; background: var(--card-soft); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 14px; font-size: 15px; font-weight: 500; color: var(--text); outline: none; transition: border-color .15s, background .15s; }
+.inp::placeholder { color: var(--text-faint); }
+.inp:focus { border-color: var(--accent); background: #fff; }
+select.inp { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
 
-.editor-set-block {
-  margin: 0 16px 12px;
-  padding: 16px;
-}
-.set-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.set-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-white);
-}
-.set-reps-control {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.rep-btn {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.1);
-  color: var(--text-white);
-  font-size: 16px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-  font-family: var(--font);
-}
-.rep-btn:hover { background: rgba(255,255,255,0.2); }
-.rep-count {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-white);
-  min-width: 20px;
-  text-align: center;
-}
+.set-block { padding: 16px; margin-bottom: 12px; }
+.set-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.set-title { font-size: 15px; font-weight: 700; }
+.set-del { background: var(--danger-soft); border: 1px solid var(--danger-line); border-radius: 9px; color: var(--danger); padding: 5px 11px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.ej-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.ej-row .inp { flex: 1; padding: 10px 12px; font-size: 13.5px; }
+.ej-row .inp.dur { width: 74px; flex: none; text-align: center; }
+.ej-del { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--danger-line); background: var(--danger-soft); color: var(--danger); font-size: 15px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.add-ej { width: 100%; padding: 10px; background: var(--accent-soft); border: 1px dashed var(--accent-line); border-radius: var(--r-sm); color: var(--accent-dk); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+.add-set { width: 100%; padding: 13px; background: var(--rest-soft); border: 1px dashed var(--rest-line); border-radius: var(--r-md); color: var(--rest); font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 14px; }
 
-.ej-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.ej-row .form-input { flex: 1; padding: 9px 12px; font-size: 13px; }
-.ej-row .form-input.dur-input { width: 70px; flex: none; }
-.ej-del-btn {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,69,58,0.3);
-  background: rgba(255,69,58,0.1);
-  color: var(--danger);
-  font-size: 16px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
-  font-family: var(--font);
-}
-.ej-del-btn:hover { background: rgba(255,69,58,0.2); }
+.editor-actions { display: flex; gap: 10px; }
+.btn-primary { flex: 1; padding: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-dk)); border: none; border-radius: var(--r-md); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(16,185,129,0.4); transition: transform .15s; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-secondary { padding: 14px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; }
+.btn-danger { padding: 14px 18px; background: var(--danger-soft); border: 1px solid var(--danger-line); border-radius: var(--r-md); color: var(--danger); font-size: 15px; font-weight: 600; cursor: pointer; }
 
-.add-ej-btn {
-  width: 100%;
-  padding: 10px;
-  background: rgba(48,209,88,0.1);
-  border: 1px dashed rgba(48,209,88,0.3);
-  border-radius: var(--radius-sm);
-  color: var(--accent);
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 4px;
-}
-.add-ej-btn:hover { background: rgba(48,209,88,0.18); }
+.overlay { position: fixed; inset: 0; z-index: 250; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(15,23,42,0.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.overlay.open { display: flex; animation: fade .25s ease; }
+.finish { width: 100%; max-width: 360px; background: var(--card); border-radius: var(--r-xl); padding: 30px 26px; text-align: center; box-shadow: var(--shadow-lg); }
+.finish-emoji { font-size: 52px; margin-bottom: 10px; }
+.finish-t { font-size: 25px; font-weight: 800; letter-spacing: -0.5px; }
+.finish-s { font-size: 14px; color: var(--text-soft); margin: 4px 0 22px; }
+.finish-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.finish-stat { background: var(--card-soft); border-radius: var(--r-md); padding: 13px; }
+.finish-stat-v { font-size: 21px; font-weight: 700; color: var(--accent-dk); }
+.finish-stat-l { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+.finish-note { width: 100%; background: var(--card-soft); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 11px 13px; font-size: 14px; color: var(--text); outline: none; resize: none; margin-bottom: 14px; }
+.finish-note:focus { border-color: var(--accent); }
 
-.editor-actions {
-  padding: 0 16px 16px;
-  display: flex;
-  gap: 10px;
-}
-.btn-primary {
-  flex: 1;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--accent), #25a244);
-  border: none;
-  border-radius: var(--radius-md);
-  color: white;
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(48,209,88,0.4);
-  transition: all 0.2s;
-}
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(48,209,88,0.5); }
-.btn-secondary {
-  padding: 14px 20px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: var(--radius-md);
-  color: var(--text-white);
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
-}
-.btn-secondary:hover { background: rgba(255,255,255,0.18); }
-.btn-danger {
-  padding: 14px 20px;
-  background: rgba(255,69,58,0.12);
-  border: 1px solid rgba(255,69,58,0.25);
-  border-radius: var(--radius-md);
-  color: var(--danger);
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
-}
-.btn-danger:hover { background: rgba(255,69,58,0.22); }
+.toast { position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; border-radius: 16px; padding: 11px 20px; font-size: 14px; font-weight: 600; z-index: 300; display: none; white-space: nowrap; box-shadow: var(--shadow-lg); }
+.toast.show { display: block; animation: toastIn .3s ease; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } to { opacity: 1; transform: translateX(-50%); } }
 
-.add-set-btn {
-  margin: 0 16px 16px;
-  width: calc(100% - 32px);
-  padding: 12px;
-  background: rgba(10,132,255,0.1);
-  border: 1px dashed rgba(10,132,255,0.3);
-  border-radius: var(--radius-md);
-  color: #64b5ff;
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.add-set-btn:hover { background: rgba(10,132,255,0.18); }
-
-/* ══════════ MODAL ══════════ */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 200;
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 0 0 20px;
-}
-.modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
-.modal-sheet {
-  width: 100%;
-  max-width: 480px;
-  background: rgba(20,20,40,0.85);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-lg) var(--radius-lg);
-  padding: 20px 24px 32px;
-  animation: slideUp 0.3s ease;
-}
-@keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.modal-handle {
-  width: 36px; height: 4px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 2px;
-  margin: 0 auto 20px;
-}
-.modal-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-white);
-  margin-bottom: 16px;
-  letter-spacing: -0.3px;
-}
-
-/* ══════════ TOAST ══════════ */
-.toast {
-  position: fixed;
-  top: 60px;
-  left: 50%; transform: translateX(-50%);
-  background: rgba(48,209,88,0.25);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(48,209,88,0.4);
-  border-radius: 20px;
-  padding: 10px 20px;
-  color: var(--text-white);
-  font-size: 14px;
-  font-weight: 600;
-  z-index: 300;
-  display: none;
-  white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(48,209,88,0.3);
-}
-.toast.show { display: block; animation: toastIn 0.3s ease; }
-@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-
-/* ══════════ LOADING ══════════ */
-.loading-screen {
-  position: fixed; inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 400;
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-}
-.loading-logo {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-.loading-title {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text-white);
-  letter-spacing: -0.5px;
-  margin-bottom: 8px;
-}
-.loading-sub {
-  font-size: 14px;
-  color: var(--text-white-soft);
-  margin-bottom: 32px;
-}
-.spinner {
-  width: 36px; height: 36px;
-  border: 3px solid rgba(255,255,255,0.15);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
+.loading { position: fixed; inset: 0; z-index: 400; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(168deg, var(--bg-1), var(--bg-2)); }
+.loading .mark { width: 60px; height: 60px; border-radius: 18px; background: linear-gradient(135deg, var(--accent), var(--accent-dk)); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 30px rgba(16,185,129,0.4); margin-bottom: 18px; }
+.loading .mark svg { width: 30px; height: 30px; }
+.loading-t { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+.loading-s { font-size: 13px; color: var(--text-soft); margin: 6px 0 28px; }
+.spinner { width: 32px; height: 32px; border: 3px solid rgba(15,23,42,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Responsivo desktop */
-@media (min-width: 480px) {
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #app {
-    border-radius: 40px;
-    overflow: hidden;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
-    height: 844px;
-    max-height: 100dvh;
-  }
-  .bottom-nav { position: absolute; border-radius: 0; }
-  .bottom-nav { max-width: 480px; }
+@media (min-width: 900px) {
+  .sidebar { display: flex; }
+  .bottom-nav { display: none; }
+  .topbar { padding-top: 28px; }
+  .screen-body { padding-bottom: 40px; }
+  .main-inner { max-width: 720px; padding: 0 8px; }
+  .stat-grid { gap: 12px; }
 }
-
-/* Fin de entrenamiento */
-.finish-overlay {
-  position: fixed; inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 250;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 20px;
-}
-.finish-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
-.finish-card {
-  width: 100%;
-  max-width: 380px;
-  background: rgba(20,20,45,0.9);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: var(--radius-xl);
-  padding: 32px 28px;
-  text-align: center;
-}
-.finish-emoji { font-size: 56px; margin-bottom: 12px; }
-.finish-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text-white);
-  letter-spacing: -0.5px;
-  margin-bottom: 6px;
-}
-.finish-sub {
-  font-size: 14px;
-  color: var(--text-white-soft);
-  margin-bottom: 24px;
-}
-.finish-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-.finish-stat {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: var(--radius-md);
-  padding: 12px;
-}
-.finish-stat-val {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
-}
-.finish-stat-lbl {
-  font-size: 11px;
-  color: var(--text-white-soft);
-  margin-top: 2px;
-}
-.finish-notas {
-  width: 100%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  font-family: var(--font);
-  font-size: 14px;
-  color: var(--text-white);
-  outline: none;
-  resize: none;
-  margin-bottom: 16px;
-}
-.finish-notas::placeholder { color: rgba(255,255,255,0.3); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
 
-<!-- Loading -->
-<div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">💪</div>
-  <div class="loading-title">WorkoutTimer</div>
-  <div class="loading-sub">Cargando tus rutinas…</div>
+<div class="loading" id="loading">
+  <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11M6.5 17.5h11M4 9v6M20 9v6M8 7v10M16 7v10"/></svg></div>
+  <div class="loading-t">Workout Timer</div>
+  <div class="loading-s">Cargando tus rutinas…</div>
   <div class="spinner"></div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- App -->
-<div id="app">
-
-  <!-- ══ SCREEN: HOME ══ -->
-  <div class="screen active" id="screen-home">
-    <div class="topbar">
-      <div>
-        <div class="topbar-title">WorkoutTimer</div>
-        <div class="topbar-sub" id="homeSubtitle">Listo para entrenar</div>
-      </div>
-      <button class="icon-btn" onclick="showScreen('screen-editor'); prepEditor()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </button>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11M6.5 17.5h11M4 9v6M20 9v6M8 7v10M16 7v10"/></svg></div>
+      <div class="name">Workout</div>
     </div>
-    <div class="screen-body">
-      <div class="glass greeting-card">
-        <div class="greeting-text">Hola 👋</div>
-        <div class="greeting-name">¿Qué entrenamos hoy?</div>
-        <div class="streak-row">
-          <div class="streak-pill" id="streakPill">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-            <span id="streakText">Cargando…</span>
+    <div class="nav-item active" data-target="screen-home" onclick="navTo('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Inicio</span></div>
+    <div class="nav-item" data-target="screen-historial" onclick="navTo('screen-historial')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="nav-label">Historial</span></div>
+    <div class="nav-item" data-target="screen-calendario" onclick="navTo('screen-calendario')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Calendario</span></div>
+    <div class="nav-item" data-target="screen-editor" onclick="navTo('screen-editor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span class="nav-label">Editor</span></div>
+  </aside>
+
+  <div class="main">
+    <div class="main-inner">
+
+      <div class="screen active" id="screen-home">
+        <div class="topbar">
+          <div><div class="topbar-title">Workout Timer</div><div class="topbar-sub" id="homeSub">Listo para entrenar</div></div>
+          <button class="icon-btn" onclick="navTo('screen-editor')" aria-label="Nueva rutina"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+        <div class="screen-body">
+          <div class="card hero">
+            <div class="hero-hi">Hola 👋</div>
+            <div class="hero-q">¿Qué entrenamos hoy?</div>
+            <div class="hero-pills">
+              <span class="pill"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5-15H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg><span id="rachaTxt">—</span></span>
+              <span class="pill rest"><span id="semanaTxt">—</span></span>
+            </div>
+          </div>
+          <div class="section-label">Mis rutinas</div>
+          <div id="rutinasList"></div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-timer">
+        <div class="topbar">
+          <button class="icon-btn" onclick="salirTimer()" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <div style="text-align:center"><div class="topbar-title" id="tRutina" style="font-size:19px">—</div><div class="topbar-sub" id="tSet">Set 1</div></div>
+          <div style="width:42px"></div>
+        </div>
+        <div class="screen-body">
+          <div class="timer-wrap">
+            <div class="ring-box">
+              <svg viewBox="0 0 260 260"><circle class="ring-bg" cx="130" cy="130" r="116"/><circle class="ring-fg" id="ringFg" cx="130" cy="130" r="116" stroke-dasharray="728.8" stroke-dashoffset="0"/></svg>
+              <div class="ring-inner"><div class="ring-count" id="tCount">00:00</div><div class="ring-ej" id="tEjName">—</div><div class="ring-tag work" id="tTag">Ejercicio</div></div>
+            </div>
+            <div class="card next-card"><div><div class="next-lbl">Siguiente</div><div class="next-name" id="tNext">—</div></div><div class="next-dur" id="tNextDur"></div></div>
+            <div class="prog-wrap"><div class="prog-top"><span id="progLbl">Ejercicio 0 / 0</span><span id="progPct">0%</span></div><div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div></div>
+            <div class="controls">
+              <button class="ctrl" onclick="prevEj()" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg></button>
+              <button class="ctrl main" onclick="togglePlay()" aria-label="Iniciar o pausar"><svg id="icoPlay" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg><svg id="icoPause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
+              <button class="ctrl" onclick="nextEj()" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg></button>
+            </div>
+            <div class="card queue"><div class="queue-lbl">En cola</div><div id="tQueue"></div></div>
           </div>
         </div>
       </div>
 
-      <div class="section-label">Mis rutinas</div>
-      <div id="rutinasList"></div>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN: TIMER ══ -->
-  <div class="screen" id="screen-timer">
-    <div class="topbar" style="padding-top:56px">
-      <button class="icon-btn" onclick="stopTimer(); showScreen('screen-home')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div style="text-align:center">
-        <div class="timer-rutina-name" id="timerRutinaName">—</div>
-        <div class="timer-set-badge" id="timerSetBadge">Set 1</div>
+      <div class="screen" id="screen-historial">
+        <div class="topbar"><div><div class="topbar-title">Historial</div><div class="topbar-sub">Tus entrenamientos</div></div></div>
+        <div class="screen-body">
+          <div class="stat-grid"><div class="card stat"><div class="stat-val" id="sTotal">0</div><div class="stat-lbl">Entrenamientos</div></div><div class="card stat"><div class="stat-val" id="sMin">0</div><div class="stat-lbl">Minutos totales</div></div></div>
+          <div class="stat-grid"><div class="card stat"><div class="stat-val" id="sSemana">0</div><div class="stat-lbl">Esta semana</div></div><div class="card stat"><div class="stat-val" id="sRacha">0</div><div class="stat-lbl">Racha 🔥</div></div></div>
+          <div class="section-label">Recientes</div>
+          <div id="histList"></div>
+        </div>
       </div>
-      <div style="width:40px"></div>
-    </div>
-    <div class="screen-body" style="padding-top:8px">
-      <!-- Ring -->
-      <div class="timer-ring-wrap">
-        <div class="timer-ring-container">
-          <svg viewBox="0 0 240 240">
-            <circle class="ring-bg" cx="120" cy="120" r="108"/>
-            <circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="108"
-              stroke-dasharray="678.58" stroke-dashoffset="0"/>
-          </svg>
-          <div class="timer-ring-inner">
-            <div class="timer-countdown" id="timerCountdown">00:00</div>
-            <div class="timer-ejercicio-name" id="timerEjNombre">—</div>
+
+      <div class="screen" id="screen-calendario">
+        <div class="topbar"><div><div class="topbar-title">Calendario</div><div class="topbar-sub" id="calSub">—</div></div></div>
+        <div class="screen-body">
+          <div class="cal-nav">
+            <button class="icon-btn" onclick="changeMonth(-1)" aria-label="Mes anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <div class="cal-month" id="calMonth">—</div>
+            <button class="icon-btn" onclick="changeMonth(1)" aria-label="Mes siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
           </div>
+          <div class="card cal-card"><div class="cal-head"><div>L</div><div>M</div><div>X</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="cal-grid" id="calGrid"></div></div>
+          <div class="card cal-detail" id="calDetail" style="display:none"><div class="cal-detail-t" id="calDetailT">—</div><div id="calDetailList"></div></div>
         </div>
       </div>
 
-      <!-- Siguiente -->
-      <div class="glass-sm timer-ejercicio-card">
-        <div class="timer-ej-actual" id="timerEjActual">—</div>
-        <div class="timer-ej-siguiente">Siguiente: <span id="timerEjSiguiente">—</span></div>
-      </div>
-
-      <!-- Progreso global -->
-      <div class="timer-progress-bar-wrap">
-        <div class="timer-progress-label">
-          <span id="progressLabel">Ejercicio 0 / 0</span>
-          <span id="progressPct">0%</span>
+      <div class="screen" id="screen-editor">
+        <div class="topbar">
+          <button class="icon-btn" onclick="navTo('screen-home')" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <div><div class="topbar-title">Editor</div><div class="topbar-sub">Crear o editar rutina</div></div>
+          <div style="width:42px"></div>
         </div>
-        <div class="timer-progress-bar"><div class="timer-progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="screen-body">
+          <div class="card" style="padding:16px;margin-bottom:14px">
+            <div class="form-g"><label class="form-lbl">Rutina</label><select class="inp" id="edSelect" onchange="loadEnEditor()"><option value="__nueva__">+ Nueva rutina</option></select></div>
+            <div class="form-g" id="edNombreWrap"><label class="form-lbl">Nombre</label><input class="inp" id="edNombre" placeholder="Ej: Abs, Full Body, Piernas…"></div>
+          </div>
+          <div id="edSets"></div>
+          <button class="add-set" onclick="addSet()">+ Agregar set</button>
+          <div class="editor-actions"><button class="btn-primary" onclick="guardarRutina()">Guardar rutina</button><button class="btn-danger" id="btnDel" onclick="eliminarRutina()" style="display:none" aria-label="Eliminar rutina">🗑</button></div>
+        </div>
       </div>
 
-      <!-- Controles -->
-      <div class="timer-controls">
-        <button class="btn-control secondary" onclick="prevEjercicio()" title="Anterior">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button class="btn-control primary" id="btnPlayPause" onclick="togglePlayPause()">
-          <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-        </button>
-        <button class="btn-control secondary" onclick="nextEjercicio()" title="Siguiente">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-
-      <!-- Cola de ejercicios -->
-      <div class="glass-sm timer-queue">
-        <div class="queue-title">En cola</div>
-        <div id="timerQueue"></div>
-      </div>
     </div>
   </div>
 
-  <!-- ══ SCREEN: HISTORIAL ══ -->
-  <div class="screen" id="screen-historial">
-    <div class="topbar">
-      <div>
-        <div class="topbar-title">Historial</div>
-        <div class="topbar-sub">Tus entrenamientos</div>
-      </div>
-    </div>
-    <div class="screen-body">
-      <div class="stats-row">
-        <div class="glass-sm stat-card">
-          <div class="stat-value stat-accent" id="statTotal">0</div>
-          <div class="stat-label">Entrenamientos</div>
-        </div>
-        <div class="glass-sm stat-card">
-          <div class="stat-value stat-accent" id="statMinutos">0</div>
-          <div class="stat-label">Minutos totales</div>
-        </div>
-      </div>
-      <div class="stats-row">
-        <div class="glass-sm stat-card">
-          <div class="stat-value stat-accent" id="statSemana">0</div>
-          <div class="stat-label">Esta semana</div>
-        </div>
-        <div class="glass-sm stat-card">
-          <div class="stat-value stat-accent" id="statRacha">0</div>
-          <div class="stat-label">Racha actual 🔥</div>
-        </div>
-      </div>
-      <div class="section-label">Recientes</div>
-      <div id="historialList"></div>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN: CALENDARIO ══ -->
-  <div class="screen" id="screen-calendario">
-    <div class="topbar">
-      <div>
-        <div class="topbar-title">Calendario</div>
-        <div class="topbar-sub" id="calSubtitle">—</div>
-      </div>
-    </div>
-    <div class="screen-body" style="padding:0 0 100px">
-      <div class="cal-nav" style="padding:0 20px 12px">
-        <button class="icon-btn" onclick="changeMonth(-1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="cal-month" id="calMonthLabel">—</div>
-        <button class="icon-btn" onclick="changeMonth(1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-      <div class="glass cal-card">
-        <div class="cal-days-header">
-          <div class="cal-day-header">L</div>
-          <div class="cal-day-header">M</div>
-          <div class="cal-day-header">X</div>
-          <div class="cal-day-header">J</div>
-          <div class="cal-day-header">V</div>
-          <div class="cal-day-header">S</div>
-          <div class="cal-day-header">D</div>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-      </div>
-      <div class="glass-sm cal-detail" id="calDetail" style="display:none">
-        <div class="cal-detail-title" id="calDetailTitle">—</div>
-        <div id="calDetailList"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN: EDITOR ══ -->
-  <div class="screen" id="screen-editor">
-    <div class="topbar">
-      <button class="icon-btn" onclick="showScreen('screen-home')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div>
-        <div class="topbar-title">Editor</div>
-        <div class="topbar-sub">Crear o editar rutina</div>
-      </div>
-      <div style="width:40px"></div>
-    </div>
-    <div class="screen-body" style="padding-top:8px">
-      <!-- Seleccionar o nueva rutina -->
-      <div class="glass-sm editor-rutina-select" style="padding:16px;margin:0 16px 16px">
-        <div class="form-group">
-          <label class="form-label">Rutina</label>
-          <select class="form-input form-select" id="editorRutinaSelect" onchange="loadRutinaEnEditor()">
-            <option value="__nueva__">+ Nueva rutina</option>
-          </select>
-        </div>
-        <div class="form-group" id="editorNombreWrap">
-          <label class="form-label">Nombre</label>
-          <input class="form-input" id="editorNombre" placeholder="Ej: Abs, Full Body, Piernas…" type="text">
-        </div>
-      </div>
-
-      <!-- Sets -->
-      <div id="editorSets"></div>
-      <button class="add-set-btn" onclick="addSet()">+ Agregar Set</button>
-
-      <!-- Acciones -->
-      <div class="editor-actions">
-        <button class="btn-primary" onclick="guardarRutina()">Guardar rutina</button>
-        <button class="btn-danger" id="btnEliminarRutina" onclick="eliminarRutina()" style="display:none">🗑</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <div class="nav-bar">
-      <div class="nav-item active" onclick="navTo('screen-home')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        <span class="nav-label">Inicio</span>
-      </div>
-      <div class="nav-item" onclick="navTo('screen-historial'); loadHistorial()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <span class="nav-label">Historial</span>
-      </div>
-      <div class="nav-item" onclick="navTo('screen-calendario'); renderCalendario()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span class="nav-label">Calendario</span>
-      </div>
-      <div class="nav-item" onclick="navTo('screen-editor'); prepEditor()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span class="nav-label">Editor</span>
-      </div>
+      <div class="nav-item active" data-target="screen-home" onclick="navTo('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Inicio</span></div>
+      <div class="nav-item" data-target="screen-historial" onclick="navTo('screen-historial')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="nav-label">Historial</span></div>
+      <div class="nav-item" data-target="screen-calendario" onclick="navTo('screen-calendario')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Calendario</span></div>
+      <div class="nav-item" data-target="screen-editor" onclick="navTo('screen-editor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span class="nav-label">Editor</span></div>
     </div>
   </nav>
 </div>
 
-<!-- Modal: fin de entrenamiento -->
-<div class="finish-overlay" id="finishOverlay">
-  <div class="finish-card">
+<div class="overlay" id="finishOverlay">
+  <div class="finish">
     <div class="finish-emoji">🎉</div>
-    <div class="finish-title">¡Listo!</div>
-    <div class="finish-sub">Entrenamiento completado</div>
-    <div class="finish-stats">
-      <div class="finish-stat">
-        <div class="finish-stat-val" id="finishDur">0:00</div>
-        <div class="finish-stat-lbl">Duración</div>
-      </div>
-      <div class="finish-stat">
-        <div class="finish-stat-val" id="finishRutina">—</div>
-        <div class="finish-stat-lbl">Rutina</div>
-      </div>
-    </div>
-    <textarea class="finish-notas" id="finishNotas" rows="2" placeholder="¿Cómo te sentiste? (opcional)"></textarea>
-    <button class="btn-primary" onclick="guardarEntrenamiento()" style="width:100%">Guardar 💾</button>
+    <div class="finish-t">¡Listo!</div>
+    <div class="finish-s">Entrenamiento completado</div>
+    <div class="finish-stats"><div class="finish-stat"><div class="finish-stat-v" id="fDur">0:00</div><div class="finish-stat-l">Duración</div></div><div class="finish-stat"><div class="finish-stat-v" id="fRutina">—</div><div class="finish-stat-l">Rutina</div></div></div>
+    <textarea class="finish-note" id="fNote" rows="2" placeholder="¿Cómo te sentiste? (opcional)"></textarea>
+    <button class="btn-primary" id="fSave" onclick="guardarEntrenamiento()" style="width:100%">Guardar 💾</button>
     <button class="btn-secondary" onclick="cerrarFinish()" style="width:100%;margin-top:8px">Descartar</button>
   </div>
 </div>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX0a0SYzFJoRysSGNbrXZ70zUv6UMQI-GiLrCCfwRbPu_jGartBQ0VZrVIP5gJ7gGQeQ/exec';
+const RING_CIRC = 2 * Math.PI * 116;
 
-// ══════════ STATE ══════════
-let rutinas = [];
-let entrenamientos = [];
-let currentScreen = 'screen-home';
+let rutinas = [], entrenamientos = [];
+let tRutina = null, tEjs = [], tIdx = 0, tTotal = 0, tRest = 0, tInterval = null, tPlaying = false, tElapsed = 0;
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+let audioCtx = null, audioUnlocked = false, wakeLock = null;
 
-// Timer state
-let timerRutina = null;
-let timerExercicios = []; // lista plana de todos los ejercicios del workout
-let timerIdx = 0;
-let timerSegsTotal = 0;
-let timerSegsRestantes = 0;
-let timerInterval = null;
-let timerPlaying = false;
-let timerStartTime = null;
-let timerElapsedSecs = 0;
-let timerRepActual = 0;
-let timerReps = 1;
-
-// Calendario
-let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-
-// ══════════ INIT ══════════
 async function init() {
   try {
-    const [dataRutinas, dataEnt] = await Promise.all([
-      apiFetch('getRutinas'),
-      apiFetch('getEntrenamientos')
-    ]);
-    rutinas = dataRutinas.rutinas || [];
-    entrenamientos = dataEnt.entrenamientos || [];
+    const [r, e] = await Promise.all([api('getRutinas'), api('getEntrenamientos')]);
+    rutinas = r.rutinas || []; entrenamientos = e.entrenamientos || [];
     renderHome();
-    document.getElementById('loadingScreen').style.display = 'none';
-  } catch(e) {
-    console.error(e);
-    document.getElementById('loadingScreen').innerHTML = `
-      <div style="text-align:center;padding:40px;color:white">
-        <div style="font-size:40px;margin-bottom:12px">⚠️</div>
-        <div style="font-size:18px;font-weight:700;margin-bottom:8px">Sin conexión</div>
-        <div style="font-size:13px;opacity:0.6">Verificá el Apps Script y volvé a intentar</div>
-        <button onclick="init()" style="margin-top:20px;padding:10px 24px;border-radius:20px;border:none;background:#30d158;color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Reintentar</button>
-      </div>`;
+    document.getElementById('loading').style.display = 'none';
+  } catch (err) {
+    document.getElementById('loading').innerHTML =
+      `<div style="text-align:center;padding:40px;color:var(--text)"><div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:18px;font-weight:700;margin-bottom:6px">Sin conexión</div><div style="font-size:13px;color:var(--text-soft)">Revisá el Apps Script y reintentá</div><button onclick="location.reload()" style="margin-top:20px;padding:11px 26px;border-radius:18px;border:none;background:#10b981;color:#fff;font-weight:700;cursor:pointer;font-family:inherit">Reintentar</button></div>`;
   }
 }
 
-async function apiFetch(accion, method = 'GET', body = null) {
+async function api(accion, method = 'GET', body = null) {
   const url = method === 'GET' ? `${SCRIPT_URL}?accion=${accion}` : SCRIPT_URL;
-  const opts = method === 'GET' ? {} : {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ accion, ...body })
-  };
-  const r = await fetch(url, opts);
-  const data = await r.json();
+  const opts = method === 'GET' ? {} : { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ accion, ...body }) };
+  const res = await fetch(url, opts);
+  const data = await res.json();
   if (!data.ok) throw new Error(data.error || 'Error');
   return data;
 }
 
-// ══════════ SCREENS ══════════
-function showScreen(id) {
+function navTo(id) {
+  if (id !== 'screen-timer') salirTimerSilent();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  currentScreen = id;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.target === id));
+  if (id === 'screen-historial') renderHist();
+  if (id === 'screen-calendario') renderCal();
+  if (id === 'screen-editor') prepEditor();
+  document.querySelectorAll('.screen-body').forEach(b => b.scrollTop = 0);
 }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-function navTo(id) {
-  showScreen(id);
-  document.querySelectorAll('.nav-item').forEach((n, i) => {
-    n.classList.remove('active');
-  });
-  const map = ['screen-home','screen-historial','screen-calendario','screen-editor'];
-  const idx = map.indexOf(id);
-  if (idx > -1) document.querySelectorAll('.nav-item')[idx].classList.add('active');
-}
-
-// ══════════ HOME ══════════
 function renderHome() {
-  // Streak
-  const hoy = new Date().toISOString().split('T')[0];
   const racha = calcRacha();
-  document.getElementById('streakText').textContent = racha > 0 ? `${racha} día${racha>1?'s':''} seguidos 🔥` : 'Sin racha aún';
-  document.getElementById('homeSubtitle').textContent = entrenamientos.length > 0
-    ? `Último: ${entrenamientos[entrenamientos.length-1]?.rutina || '—'}`
-    : 'Tu primera sesión te espera';
-
+  document.getElementById('rachaTxt').textContent = racha > 0 ? `${racha} día${racha > 1 ? 's' : ''} seguidos 🔥` : 'Sin racha aún';
+  const sem = entrenamientos.filter(e => sameWeek(new Date(e.fecha + 'T12:00:00'), new Date())).length;
+  document.getElementById('semanaTxt').textContent = `${sem} esta semana`;
+  document.getElementById('homeSub').textContent = entrenamientos.length ? `Último: ${entrenamientos[entrenamientos.length - 1].rutina}` : 'Tu primera sesión te espera';
   const list = document.getElementById('rutinasList');
-  if (rutinas.length === 0) {
-    list.innerHTML = `<div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-      <p>No hay rutinas aún.<br>Creá una en el Editor ✏️</p>
-    </div>`;
-    return;
-  }
+  if (!rutinas.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>No hay rutinas aún.<br>Creá una en el Editor ✏️</p></div>`; return; }
   list.innerHTML = rutinas.map(r => {
-    const ejercicios = Object.values(r.sets).flat();
-    const durTotal = ejercicios.reduce((a, e) => a + e.duracion, 0);
-    const nSets = Object.keys(r.sets).length;
-    return `<div class="glass-sm rutina-card" onclick="iniciarRutina('${r.nombre}')">
-      <div class="rutina-info">
-        <div class="rutina-name">${r.nombre}</div>
-        <div class="rutina-meta">${nSets} set${nSets>1?'s':''} · ${ejercicios.length} ejercicios · ${Math.ceil(durTotal/60)} min</div>
-      </div>
-      <div class="rutina-arrow">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </div>
-    </div>`;
+    const ejs = Object.values(r.sets).flat(); const dur = ejs.reduce((a, e) => a + e.duracion, 0); const nSets = Object.keys(r.sets).length;
+    return `<div class="card rutina-card" onclick="iniciarRutina('${esc(r.nombre)}')"><div class="rutina-emoji">💪</div><div class="rutina-info"><div class="rutina-name">${esc(r.nombre)}</div><div class="rutina-meta">${nSets} set${nSets > 1 ? 's' : ''} · ${ejs.length} ejercicios · ${Math.ceil(dur / 60)} min</div></div><div class="rutina-go"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div></div>`;
   }).join('');
 }
 
-// ══════════ TIMER ══════════
-function iniciarRutina(nombreRutina) {
-  timerRutina = rutinas.find(r => r.nombre === nombreRutina);
-  if (!timerRutina) return;
-
-  // Construir lista plana de ejercicios (setsxreps)
-  timerExercicios = [];
-  const sets = Object.keys(timerRutina.sets).sort();
-  for (const set of sets) {
-    const ejsSet = timerRutina.sets[set];
-    timerExercicios.push({ tipo: '__set_header__', nombre: set });
-    for (const ej of ejsSet) {
-      timerExercicios.push({ ...ej, set });
-    }
-  }
-  // Filtrar headers para el índice real
-  timerExercicios = timerExercicios.filter(e => e.tipo !== '__set_header__');
-
-  timerIdx = 0;
-  timerPlaying = false;
-  timerStartTime = null;
-  timerElapsedSecs = 0;
-  clearInterval(timerInterval);
-
+function iniciarRutina(nombre) {
+  tRutina = rutinas.find(r => r.nombre === nombre); if (!tRutina) return;
+  tEjs = [];
+  Object.keys(tRutina.sets).sort().forEach(set => tRutina.sets[set].forEach(ej => tEjs.push({ ...ej, set })));
+  tIdx = 0; tPlaying = false; tElapsed = 0; clearInterval(tInterval);
   showScreen('screen-timer');
-  renderTimerUI();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  renderTimer(true);
 }
 
-function renderTimerUI() {
-  const ej = timerExercicios[timerIdx];
-  if (!ej) return;
-
-  document.getElementById('timerRutinaName').textContent = timerRutina.nombre;
-  document.getElementById('timerSetBadge').textContent = ej.set;
-
-  timerSegsTotal = ej.duracion;
-  timerSegsRestantes = ej.duracion;
-
-  updateTimerDisplay();
-  updateQueue();
-  updateProgress();
-
-  // Siguiente
-  const sig = timerExercicios[timerIdx + 1];
-  document.getElementById('timerEjSiguiente').textContent = sig ? `${sig.ejercicio} (${sig.duracion}s)` : '¡Fin!';
+function renderTimer(reset) {
+  const ej = tEjs[tIdx]; if (!ej) return;
+  document.getElementById('tRutina').textContent = tRutina.nombre;
+  document.getElementById('tSet').textContent = ej.set;
+  tTotal = ej.duracion; tRest = ej.duracion;
+  if (reset) { const ring = document.getElementById('ringFg'); ring.style.transition = 'none'; ring.style.strokeDashoffset = 0; void ring.offsetWidth; ring.style.transition = ''; }
+  drawTimer(); drawQueue(); drawProgress();
+  const sig = tEjs[tIdx + 1];
+  document.getElementById('tNext').textContent = sig ? sig.ejercicio : '¡Último!';
+  document.getElementById('tNextDur').textContent = sig ? sig.duracion + 's' : '';
 }
 
-function updateTimerDisplay() {
-  const ej = timerExercicios[timerIdx];
-  const isRest = ej?.ejercicio?.toLowerCase().includes('rest') || ej?.ejercicio?.toLowerCase().includes('descanso');
-  const secs = timerSegsRestantes;
-  const m = Math.floor(secs / 60).toString().padStart(2, '0');
-  const s = (secs % 60).toString().padStart(2, '0');
-  document.getElementById('timerCountdown').textContent = `${m}:${s}`;
-  document.getElementById('timerEjNombre').textContent = ej?.ejercicio || '—';
-  document.getElementById('timerEjActual').textContent = ej?.ejercicio || '—';
+function isRest(name) { const n = (name || '').toLowerCase(); return n.includes('rest') || n.includes('descanso') || n.includes('pausa'); }
 
-  // Ring
-  const circum = 2 * Math.PI * 108; // 678.58
-  const pct = timerSegsRestantes / timerSegsTotal;
-  const offset = circum * (1 - pct);
-  const ring = document.getElementById('ringProgress');
-  ring.style.strokeDashoffset = offset;
-  ring.className = 'ring-progress' + (isRest ? ' rest' : '');
+function drawTimer() {
+  const ej = tEjs[tIdx], rest = isRest(ej.ejercicio);
+  document.getElementById('tCount').textContent = fmt(tRest);
+  document.getElementById('tEjName').textContent = ej.ejercicio;
+  const tag = document.getElementById('tTag'); tag.textContent = rest ? 'Descanso' : 'Ejercicio'; tag.className = 'ring-tag ' + (rest ? 'rest' : 'work');
+  const ring = document.getElementById('ringFg'); ring.style.strokeDashoffset = RING_CIRC * (1 - tRest / tTotal); ring.className = 'ring-fg' + (rest ? ' rest' : '');
 }
-
-function updateProgress() {
-  const total = timerExercicios.length;
-  const done = timerIdx;
-  const pct = Math.round((done / total) * 100);
-  document.getElementById('progressLabel').textContent = `Ejercicio ${done + 1} / ${total}`;
-  document.getElementById('progressPct').textContent = `${pct}%`;
-  document.getElementById('progressFill').style.width = pct + '%';
+function drawProgress() {
+  const pct = Math.round((tIdx / tEjs.length) * 100);
+  document.getElementById('progLbl').textContent = `Ejercicio ${tIdx + 1} / ${tEjs.length}`;
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progFill').style.width = pct + '%';
 }
-
-function updateQueue() {
-  const queue = document.getElementById('timerQueue');
-  const start = Math.max(0, timerIdx - 1);
-  const end = Math.min(timerExercicios.length, timerIdx + 5);
-  queue.innerHTML = timerExercicios.slice(start, end).map((e, i) => {
-    const realIdx = start + i;
-    const isRest = e.ejercicio?.toLowerCase().includes('rest') || e.ejercicio?.toLowerCase().includes('descanso');
-    let cls, dotCls;
-    if (realIdx < timerIdx) { cls = 'done'; dotCls = 'done-dot'; }
-    else if (realIdx === timerIdx) { cls = 'current'; dotCls = isRest ? 'rest-dot' : 'active'; }
-    else { cls = 'upcoming'; dotCls = isRest ? 'rest-dot' : 'up-dot'; }
-    return `<div class="queue-item ${cls}">
-      <div class="queue-dot ${dotCls}"></div>
-      <div class="queue-item-name">${e.ejercicio}</div>
-      <div class="queue-item-time">${e.duracion}s</div>
-    </div>`;
+function drawQueue() {
+  const start = Math.max(0, tIdx - 1), end = Math.min(tEjs.length, tIdx + 5);
+  document.getElementById('tQueue').innerHTML = tEjs.slice(start, end).map((e, i) => {
+    const ri = start + i, rest = isRest(e.ejercicio);
+    const cls = ri < tIdx ? 'done' : ri === tIdx ? '' : 'up';
+    const dot = ri < tIdx ? '' : rest ? 'rest' : 'work';
+    return `<div class="q-item ${cls}"><div class="q-dot ${dot}"></div><div class="q-name">${esc(e.ejercicio)}</div><div class="q-time">${e.duracion}s</div></div>`;
   }).join('');
 }
 
-function togglePlayPause() {
-  if (timerPlaying) {
-    pauseTimer();
-  } else {
-    playTimer();
-  }
-}
-
-function playTimer() {
-  timerPlaying = true;
-  if (!timerStartTime) timerStartTime = Date.now();
-  document.getElementById('iconPlay').style.display = 'none';
-  document.getElementById('iconPause').style.display = 'block';
-
-  // Anunciar ejercicio al iniciar
-  if (timerSegsRestantes === timerExercicios[timerIdx]?.duracion) {
-    hablar(timerExercicios[timerIdx]?.ejercicio || '');
-  }
-
-  timerInterval = setInterval(() => {
-    if (timerSegsRestantes > 0) {
-      timerSegsRestantes--;
-      timerElapsedSecs++;
-      updateTimerDisplay();
-
-      // Beep en últimos 3 segundos
-      if (timerSegsRestantes <= 3 && timerSegsRestantes > 0) {
-        beep(timerSegsRestantes === 1 ? 880 : 660, 100);
-      }
-    } else {
-      nextEjercicio();
-    }
+function togglePlay() { unlockAudio(); tPlaying ? pausar() : reproducir(); }
+function reproducir() {
+  tPlaying = true;
+  document.getElementById('icoPlay').style.display = 'none';
+  document.getElementById('icoPause').style.display = 'block';
+  requestWake();
+  if (tRest === tEjs[tIdx].duracion) hablar(tEjs[tIdx].ejercicio);
+  tInterval = setInterval(() => {
+    if (tRest > 0) { tRest--; tElapsed++; drawTimer(); if (tRest <= 3 && tRest > 0) beep(tRest === 1 ? 880 : 660, 100); }
+    else nextEj();
   }, 1000);
 }
-
-function pauseTimer() {
-  timerPlaying = false;
-  clearInterval(timerInterval);
-  document.getElementById('iconPlay').style.display = 'block';
-  document.getElementById('iconPause').style.display = 'none';
+function pausar() {
+  tPlaying = false; clearInterval(tInterval);
+  document.getElementById('icoPlay').style.display = 'block';
+  document.getElementById('icoPause').style.display = 'none';
+  releaseWake();
 }
-
-function stopTimer() {
-  pauseTimer();
-  timerIdx = 0;
-  timerElapsedSecs = 0;
-}
-
-function nextEjercicio() {
-  clearInterval(timerInterval);
-  timerPlaying = false;
-  document.getElementById('iconPlay').style.display = 'block';
-  document.getElementById('iconPause').style.display = 'none';
-
-  if (timerIdx < timerExercicios.length - 1) {
-    timerIdx++;
-    renderTimerUI();
-    beep(1047, 150); // do agudo
-    setTimeout(() => {
-      const ej = timerExercicios[timerIdx];
-      hablar(`${ej.ejercicio}, ${ej.duracion} segundos`);
-      playTimer();
-    }, 600);
+function nextEj() {
+  clearInterval(tInterval); tPlaying = false;
+  document.getElementById('icoPlay').style.display = 'block';
+  document.getElementById('icoPause').style.display = 'none';
+  if (tIdx < tEjs.length - 1) {
+    tIdx++; renderTimer(true); beep(1047, 150);
+    setTimeout(() => { hablar(`${tEjs[tIdx].ejercicio}, ${tEjs[tIdx].duracion} segundos`); reproducir(); }, 550);
   } else {
-    // Fin del entrenamiento
-    beep(1047, 200);
-    setTimeout(() => beep(1319, 200), 250);
-    setTimeout(() => beep(1568, 400), 500);
-    hablar('¡Entrenamiento completado! ¡Muy bien!');
-    mostrarFinish();
+    [0, 250, 500].forEach((d, i) => setTimeout(() => beep([1047, 1319, 1568][i], i === 2 ? 380 : 180), d));
+    hablar('¡Entrenamiento completado! Muy bien.'); releaseWake(); mostrarFinish();
   }
 }
-
-function prevEjercicio() {
-  clearInterval(timerInterval);
-  timerPlaying = false;
-  document.getElementById('iconPlay').style.display = 'block';
-  document.getElementById('iconPause').style.display = 'none';
-  if (timerIdx > 0) {
-    timerIdx--;
-    renderTimerUI();
-  }
+function prevEj() {
+  clearInterval(tInterval); tPlaying = false;
+  document.getElementById('icoPlay').style.display = 'block';
+  document.getElementById('icoPause').style.display = 'none';
+  if (tIdx > 0) { tIdx--; renderTimer(true); }
 }
+function salirTimer() { pausar(); navTo('screen-home'); }
+function salirTimerSilent() { if (tInterval) { clearInterval(tInterval); tPlaying = false; releaseWake(); document.getElementById('icoPlay').style.display = 'block'; document.getElementById('icoPause').style.display = 'none'; } }
 
-// ══════════ VOZ ══════════
-function hablar(texto) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(texto);
-  u.lang = 'es-AR';
-  u.rate = 0.95;
-  u.pitch = 1.0;
-  window.speechSynthesis.speak(u);
+function unlockAudio() {
+  if (audioUnlocked) return;
+  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
+  audioUnlocked = true;
 }
-
-// ══════════ BEEP ══════════
-let audioCtx = null;
+function hablar(txt) { if (!window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(txt); u.lang = 'es-AR'; u.rate = 0.98; u.pitch = 1; speechSynthesis.speak(u); }
 function beep(freq = 880, dur = 150) {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.frequency.value = freq;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur / 1000);
-    osc.start(); osc.stop(audioCtx.currentTime + dur / 1000);
-  } catch(e) {}
+  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+    o.frequency.value = freq; o.type = 'sine'; g.gain.setValueAtTime(0.28, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur / 1000);
+    o.start(); o.stop(audioCtx.currentTime + dur / 1000);
+  } catch (e) {}
 }
+async function requestWake() { try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {} }
+function releaseWake() { try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch (e) {} }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && tPlaying) requestWake(); });
 
-// ══════════ FIN ENTRENAMIENTO ══════════
 function mostrarFinish() {
-  const dur = timerElapsedSecs;
-  const m = Math.floor(dur / 60).toString().padStart(2,'0');
-  const s = (dur % 60).toString().padStart(2,'0');
-  document.getElementById('finishDur').textContent = `${m}:${s}`;
-  document.getElementById('finishRutina').textContent = timerRutina?.nombre || '—';
-  document.getElementById('finishNotas').value = '';
+  document.getElementById('fDur').textContent = fmt(tElapsed);
+  document.getElementById('fRutina').textContent = tRutina.nombre;
+  document.getElementById('fNote').value = '';
   document.getElementById('finishOverlay').classList.add('open');
 }
-
-function cerrarFinish() {
-  document.getElementById('finishOverlay').classList.remove('open');
-  showScreen('screen-home');
-}
-
+function cerrarFinish() { document.getElementById('finishOverlay').classList.remove('open'); navTo('screen-home'); }
 async function guardarEntrenamiento() {
-  const notas = document.getElementById('finishNotas').value;
-  const btn = document.querySelector('#finishOverlay .btn-primary');
-  btn.textContent = 'Guardando…';
-  btn.disabled = true;
-
+  const note = document.getElementById('fNote').value, btn = document.getElementById('fSave');
+  btn.textContent = 'Guardando…'; btn.disabled = true;
   try {
-    await apiFetch('guardarEntrenamiento', 'POST', {
-      rutina: timerRutina.nombre,
-      duracionTotal: timerElapsedSecs,
-      notas
-    });
-    // Actualizar local
-    const hoy = new Date();
-    entrenamientos.push({
-      fecha: hoy.toISOString().split('T')[0],
-      hora: hoy.toTimeString().slice(0,5),
-      rutina: timerRutina.nombre,
-      duracionTotal: timerElapsedSecs,
-      duracionFormateada: `${Math.floor(timerElapsedSecs/60).toString().padStart(2,'0')}:${(timerElapsedSecs%60).toString().padStart(2,'0')}`,
-      notas
-    });
-    showToast('✅ ¡Entrenamiento guardado!');
-    cerrarFinish();
-    renderHome();
-  } catch(e) {
-    showToast('❌ Error al guardar');
-    btn.textContent = 'Guardar 💾';
-    btn.disabled = false;
-  }
+    await api('guardarEntrenamiento', 'POST', { rutina: tRutina.nombre, duracionTotal: tElapsed, notas: note });
+    const now = new Date();
+    entrenamientos.push({ fecha: now.toISOString().split('T')[0], hora: now.toTimeString().slice(0, 5), rutina: tRutina.nombre, duracionTotal: tElapsed, duracionFormateada: fmt(tElapsed), notas: note });
+    toast('✅ ¡Entrenamiento guardado!'); cerrarFinish(); renderHome();
+  } catch (e) { toast('❌ Error al guardar'); }
+  btn.textContent = 'Guardar 💾'; btn.disabled = false;
 }
 
-// ══════════ HISTORIAL ══════════
-function loadHistorial() {
-  const total = entrenamientos.length;
-  const minutos = entrenamientos.reduce((a, e) => a + Math.round(e.duracionTotal / 60), 0);
-  const hoy = new Date();
-  const semanaActual = getISOWeek(hoy);
-  const semana = entrenamientos.filter(e => {
-    const f = new Date(e.fecha + 'T12:00:00');
-    return getISOWeek(f) === semanaActual && f.getFullYear() === hoy.getFullYear();
-  }).length;
-
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statMinutos').textContent = minutos;
-  document.getElementById('statSemana').textContent = semana;
-  document.getElementById('statRacha').textContent = calcRacha();
-
-  const list = document.getElementById('historialList');
-  if (total === 0) {
-    list.innerHTML = `<div class="empty-state"><p>Aún no hay entrenamientos guardados.</p></div>`;
-    return;
-  }
-
-  const sorted = [...entrenamientos].reverse();
-  list.innerHTML = sorted.map(e => {
-    const dur = Math.round(e.duracionTotal / 60);
-    const fecha = new Date(e.fecha + 'T12:00:00');
-    const fechaStr = fecha.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' });
-    return `<div class="glass-sm hist-item">
-      <div class="hist-dot">💪</div>
-      <div class="hist-info">
-        <div class="hist-rutina">${e.rutina}</div>
-        <div class="hist-fecha">${fechaStr} · ${e.hora}</div>
-        ${e.notas ? `<div class="hist-notas">"${e.notas}"</div>` : ''}
-      </div>
-      <div class="hist-duracion">${dur} min</div>
-    </div>`;
+function renderHist() {
+  const total = entrenamientos.length, min = entrenamientos.reduce((a, e) => a + Math.round(e.duracionTotal / 60), 0);
+  const sem = entrenamientos.filter(e => sameWeek(new Date(e.fecha + 'T12:00:00'), new Date())).length;
+  document.getElementById('sTotal').textContent = total;
+  document.getElementById('sMin').textContent = min;
+  document.getElementById('sSemana').textContent = sem;
+  document.getElementById('sRacha').textContent = calcRacha();
+  const list = document.getElementById('histList');
+  if (!total) { list.innerHTML = `<div class="empty"><p>Aún no hay entrenamientos guardados.</p></div>`; return; }
+  list.innerHTML = [...entrenamientos].reverse().map(e => {
+    const f = new Date(e.fecha + 'T12:00:00'), fs = f.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' });
+    return `<div class="card hist"><div class="hist-ico">💪</div><div class="hist-info"><div class="hist-name">${esc(e.rutina)}</div><div class="hist-date">${fs} · ${e.hora}</div>${e.notas ? `<div class="hist-note">"${esc(e.notas)}"</div>` : ''}</div><div class="hist-dur">${Math.round(e.duracionTotal / 60)} min</div></div>`;
   }).join('');
 }
 
-// ══════════ CALENDARIO ══════════
-function renderCalendario() {
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  document.getElementById('calMonthLabel').textContent = `${meses[calMonth]} ${calYear}`;
-  const entrenadosEste = entrenamientos.filter(e => {
-    const f = new Date(e.fecha + 'T12:00:00');
-    return f.getMonth() === calMonth && f.getFullYear() === calYear;
-  }).length;
-  document.getElementById('calSubtitle').textContent = `${entrenadosEste} sesión${entrenadosEste!==1?'es':''} este mes`;
-
-  const grid = document.getElementById('calGrid');
-  const primerDia = new Date(calYear, calMonth, 1);
-  const ultimoDia = new Date(calYear, calMonth + 1, 0);
-  const hoy = new Date();
-
-  // Offset: lunes = 0
-  let offset = primerDia.getDay() - 1;
-  if (offset < 0) offset = 6;
-
-  // Entrenamientos por fecha
-  const byFecha = {};
-  entrenamientos.forEach(e => {
-    if (!byFecha[e.fecha]) byFecha[e.fecha] = [];
-    byFecha[e.fecha].push(e);
-  });
-
-  let cells = '';
-  // Días del mes anterior
-  const prevMonth = new Date(calYear, calMonth, 0);
-  for (let i = offset - 1; i >= 0; i--) {
-    cells += `<div class="cal-cell other-month"><span class="cal-cell-num">${prevMonth.getDate() - i}</span></div>`;
+function renderCal() {
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('calMonth').textContent = `${meses[calMonth]} ${calYear}`;
+  const cnt = entrenamientos.filter(e => { const f = new Date(e.fecha + 'T12:00:00'); return f.getMonth() === calMonth && f.getFullYear() === calYear; }).length;
+  document.getElementById('calSub').textContent = `${cnt} sesión${cnt !== 1 ? 'es' : ''} este mes`;
+  const primer = new Date(calYear, calMonth, 1), ultimo = new Date(calYear, calMonth + 1, 0), hoy = new Date();
+  let off = primer.getDay() - 1; if (off < 0) off = 6;
+  const byF = {}; entrenamientos.forEach(e => { (byF[e.fecha] = byF[e.fecha] || []).push(e); });
+  let html = ''; const prev = new Date(calYear, calMonth, 0);
+  for (let i = off - 1; i >= 0; i--) html += `<div class="cal-cell off"><span class="cal-num">${prev.getDate() - i}</span></div>`;
+  for (let d = 1; d <= ultimo.getDate(); d++) {
+    const fecha = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const isHoy = hoy.getDate() === d && hoy.getMonth() === calMonth && hoy.getFullYear() === calYear, has = byF[fecha]?.length > 0;
+    html += `<div class="cal-cell ${isHoy ? 'today' : ''} ${has ? 'has' : ''}" ${has ? `onclick="showCalDetail('${fecha}')"` : ''}><span class="cal-num">${d}</span>${has ? '<div class="cal-d"></div>' : ''}</div>`;
   }
-  // Días del mes
-  for (let d = 1; d <= ultimoDia.getDate(); d++) {
-    const fecha = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isHoy = hoy.getDate()===d && hoy.getMonth()===calMonth && hoy.getFullYear()===calYear;
-    const tieneWorkout = byFecha[fecha]?.length > 0;
-    const cls = [isHoy ? 'today' : '', tieneWorkout ? 'has-workout' : ''].filter(Boolean).join(' ');
-    cells += `<div class="cal-cell ${cls}" onclick="${tieneWorkout ? `showCalDetail('${fecha}')` : ''}">
-      <span class="cal-cell-num">${d}</span>
-      ${tieneWorkout ? '<div class="cal-dot"></div>' : ''}
-    </div>`;
-  }
-  // Rellenar
-  const total = offset + ultimoDia.getDate();
-  const rem = total % 7 === 0 ? 0 : 7 - (total % 7);
-  for (let i = 1; i <= rem; i++) {
-    cells += `<div class="cal-cell other-month"><span class="cal-cell-num">${i}</span></div>`;
-  }
-  grid.innerHTML = cells;
-}
-
-function changeMonth(dir) {
-  calMonth += dir;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  if (calMonth < 0) { calMonth = 11; calYear--; }
-  renderCalendario();
+  const tot = off + ultimo.getDate(), rem = tot % 7 === 0 ? 0 : 7 - tot % 7;
+  for (let i = 1; i <= rem; i++) html += `<div class="cal-cell off"><span class="cal-num">${i}</span></div>`;
+  document.getElementById('calGrid').innerHTML = html;
   document.getElementById('calDetail').style.display = 'none';
 }
-
+function changeMonth(d) { calMonth += d; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
 function showCalDetail(fecha) {
-  const ents = entrenamientos.filter(e => e.fecha === fecha);
-  const f = new Date(fecha + 'T12:00:00');
-  const label = f.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
-  document.getElementById('calDetailTitle').textContent = label;
-  document.getElementById('calDetailList').innerHTML = ents.map(e => `
-    <div class="cal-detail-item">
-      <div style="font-size:20px">💪</div>
-      <div>
-        <div style="font-size:14px;font-weight:600;color:var(--text-white)">${e.rutina}</div>
-        <div style="font-size:12px;color:var(--text-white-soft)">${e.hora} · ${Math.round(e.duracionTotal/60)} min${e.notas ? ` · "${e.notas}"` : ''}</div>
-      </div>
-    </div>`).join('');
-  const detail = document.getElementById('calDetail');
-  detail.style.display = 'block';
-  detail.scrollIntoView({ behavior: 'smooth' });
+  const ents = entrenamientos.filter(e => e.fecha === fecha), f = new Date(fecha + 'T12:00:00');
+  document.getElementById('calDetailT').textContent = f.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('calDetailList').innerHTML = ents.map(e => `<div class="cal-detail-item"><div style="font-size:19px">💪</div><div><div style="font-size:14px;font-weight:600">${esc(e.rutina)}</div><div style="font-size:12px;color:var(--text-soft)">${e.hora} · ${Math.round(e.duracionTotal / 60)} min${e.notas ? ` · "${esc(e.notas)}"` : ''}</div></div></div>`).join('');
+  document.getElementById('calDetail').style.display = 'block';
 }
 
-// ══════════ EDITOR ══════════
+let edSets = [];
 function prepEditor() {
-  const sel = document.getElementById('editorRutinaSelect');
-  sel.innerHTML = '<option value="__nueva__">+ Nueva rutina</option>';
-  rutinas.forEach(r => {
-    const o = document.createElement('option');
-    o.value = r.nombre;
-    o.textContent = r.nombre;
-    sel.appendChild(o);
-  });
-  sel.value = '__nueva__';
-  loadRutinaEnEditor();
+  const sel = document.getElementById('edSelect');
+  sel.innerHTML = '<option value="__nueva__">+ Nueva rutina</option>' + rutinas.map(r => `<option value="${esc(r.nombre)}">${esc(r.nombre)}</option>`).join('');
+  sel.value = '__nueva__'; loadEnEditor();
 }
-
-function loadRutinaEnEditor() {
-  const val = document.getElementById('editorRutinaSelect').value;
-  const nombreWrap = document.getElementById('editorNombreWrap');
-  const btnEl = document.getElementById('btnEliminarRutina');
-
-  if (val === '__nueva__') {
-    nombreWrap.style.display = 'block';
-    document.getElementById('editorNombre').value = '';
-    btnEl.style.display = 'none';
-    renderEditorSets([{ nombre: 'Set 1', ejercicios: [{ ejercicio: '', duracion: 40 }] }]);
-  } else {
-    nombreWrap.style.display = 'none';
-    btnEl.style.display = 'block';
-    const r = rutinas.find(x => x.nombre === val);
-    if (r) {
-      const sets = Object.keys(r.sets).sort().map(s => ({
-        nombre: s,
-        ejercicios: r.sets[s].map(e => ({ ejercicio: e.ejercicio, duracion: e.duracion }))
-      }));
-      renderEditorSets(sets);
-    }
-  }
+function loadEnEditor() {
+  const val = document.getElementById('edSelect').value, wrap = document.getElementById('edNombreWrap'), btn = document.getElementById('btnDel');
+  if (val === '__nueva__') { wrap.style.display = 'block'; document.getElementById('edNombre').value = ''; btn.style.display = 'none'; renderSets([{ nombre: 'Set 1', ejercicios: [{ ejercicio: '', duracion: 40 }] }]); }
+  else { wrap.style.display = 'none'; btn.style.display = 'block'; const r = rutinas.find(x => x.nombre === val); renderSets(Object.keys(r.sets).sort().map(s => ({ nombre: s, ejercicios: r.sets[s].map(e => ({ ejercicio: e.ejercicio, duracion: e.duracion })) }))); }
 }
-
-let editorSetsData = [];
-
-function renderEditorSets(sets) {
-  editorSetsData = sets;
-  const container = document.getElementById('editorSets');
-  container.innerHTML = editorSetsData.map((set, si) => renderSetBlock(set, si)).join('');
+function renderSets(sets) { edSets = sets; redrawSets(); }
+function redrawSets() {
+  document.getElementById('edSets').innerHTML = edSets.map((set, si) => {
+    const ejs = set.ejercicios.map((e, ei) => `<div class="ej-row"><input class="inp" placeholder="Ejercicio" value="${esc(e.ejercicio)}" oninput="edSets[${si}].ejercicios[${ei}].ejercicio=this.value"><input class="inp dur" type="number" min="1" value="${e.duracion}" oninput="edSets[${si}].ejercicios[${ei}].duracion=Number(this.value)"><button class="ej-del" onclick="delEj(${si},${ei})" aria-label="Eliminar">✕</button></div>`).join('');
+    return `<div class="card set-block"><div class="set-head"><div class="set-title">${esc(set.nombre)}</div><button class="set-del" onclick="delSet(${si})">Eliminar</button></div>${ejs}<button class="add-ej" onclick="addEj(${si})">+ Ejercicio</button></div>`;
+  }).join('');
 }
-
-function renderSetBlock(set, si) {
-  const ejsHTML = set.ejercicios.map((e, ei) => `
-    <div class="ej-row">
-      <input class="form-input" placeholder="Ejercicio" value="${e.ejercicio}" onchange="editorSetsData[${si}].ejercicios[${ei}].ejercicio=this.value">
-      <input class="form-input dur-input" type="number" min="1" value="${e.duracion}" placeholder="seg" onchange="editorSetsData[${si}].ejercicios[${ei}].duracion=Number(this.value)">
-      <button class="ej-del-btn" onclick="deleteEj(${si},${ei})">✕</button>
-    </div>`).join('');
-  return `<div class="glass-sm editor-set-block" style="padding:16px;margin:0 16px 12px">
-    <div class="set-header">
-      <div class="set-title">${set.nombre}</div>
-      <button onclick="deleteSet(${si})" style="background:rgba(255,69,58,0.1);border:1px solid rgba(255,69,58,0.25);border-radius:8px;color:var(--danger);padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Eliminar set</button>
-    </div>
-    ${ejsHTML}
-    <button class="add-ej-btn" onclick="addEjercicio(${si})">+ Ejercicio</button>
-  </div>`;
-}
-
-function addEjercicio(si) {
-  editorSetsData[si].ejercicios.push({ ejercicio: '', duracion: 40 });
-  document.getElementById('editorSets').innerHTML = editorSetsData.map((s, i) => renderSetBlock(s, i)).join('');
-}
-
-function deleteEj(si, ei) {
-  editorSetsData[si].ejercicios.splice(ei, 1);
-  document.getElementById('editorSets').innerHTML = editorSetsData.map((s, i) => renderSetBlock(s, i)).join('');
-}
-
-function addSet() {
-  editorSetsData.push({ nombre: `Set ${editorSetsData.length + 1}`, ejercicios: [{ ejercicio: '', duracion: 40 }] });
-  document.getElementById('editorSets').innerHTML = editorSetsData.map((s, i) => renderSetBlock(s, i)).join('');
-}
-
-function deleteSet(si) {
-  editorSetsData.splice(si, 1);
-  editorSetsData.forEach((s, i) => s.nombre = `Set ${i + 1}`);
-  document.getElementById('editorSets').innerHTML = editorSetsData.map((s, i) => renderSetBlock(s, i)).join('');
-}
-
+function addEj(si) { edSets[si].ejercicios.push({ ejercicio: '', duracion: 40 }); redrawSets(); }
+function delEj(si, ei) { edSets[si].ejercicios.splice(ei, 1); redrawSets(); }
+function addSet() { edSets.push({ nombre: `Set ${edSets.length + 1}`, ejercicios: [{ ejercicio: '', duracion: 40 }] }); redrawSets(); }
+function delSet(si) { edSets.splice(si, 1); edSets.forEach((s, i) => s.nombre = `Set ${i + 1}`); redrawSets(); }
 async function guardarRutina() {
-  const val = document.getElementById('editorRutinaSelect').value;
-  const esNueva = val === '__nueva__';
-  const nombre = esNueva ? document.getElementById('editorNombre').value.trim() : val;
-
-  if (!nombre) return showToast('⚠️ Poné un nombre a la rutina');
-  if (editorSetsData.length === 0) return showToast('⚠️ Agregá al menos un set');
-
-  // Construir filas para Sheets
-  const filas = [];
-  const id = nombre.toLowerCase().replace(/\s+/g, '-') + '-001';
-  let orden = 1;
-  for (const set of editorSetsData) {
-    for (const ej of set.ejercicios) {
-      if (!ej.ejercicio.trim()) continue;
-      filas.push({ id, nombre, set: set.nombre, ejercicio: ej.ejercicio, duracion: ej.duracion, orden });
-      orden++;
-    }
-  }
-  if (filas.length === 0) return showToast('⚠️ Completá al menos un ejercicio');
-
+  const val = document.getElementById('edSelect').value, esNueva = val === '__nueva__';
+  const nombre = esNueva ? document.getElementById('edNombre').value.trim() : val;
+  if (!nombre) return toast('⚠️ Poné un nombre');
+  const filas = []; const id = nombre.toLowerCase().replace(/\s+/g, '-') + '-001'; let orden = 1;
+  edSets.forEach(set => set.ejercicios.forEach(ej => { if (ej.ejercicio.trim()) filas.push({ id, nombre, set: set.nombre, ejercicio: ej.ejercicio.trim(), duracion: ej.duracion, orden: orden++ }); }));
+  if (!filas.length) return toast('⚠️ Agregá al menos un ejercicio');
   try {
-    await apiFetch('guardarRutina', 'POST', { filas, nombre, esNueva });
-    // Actualizar local
-    const sets = {};
-    editorSetsData.forEach(s => {
-      sets[s.nombre] = s.ejercicios.filter(e => e.ejercicio.trim()).map((e, i) => ({
-        ejercicio: e.ejercicio, duracion: e.duracion, orden: i + 1
-      }));
-    });
-    if (esNueva) {
-      rutinas.push({ id, nombre, sets });
-    } else {
-      const idx = rutinas.findIndex(r => r.nombre === nombre);
-      if (idx > -1) rutinas[idx].sets = sets;
-    }
-    renderHome();
-    showToast('✅ Rutina guardada');
-    setTimeout(() => navTo('screen-home'), 800);
-  } catch(e) {
-    showToast('❌ Error al guardar: ' + e.message);
-  }
+    await api('guardarRutina', 'POST', { filas, nombre, esNueva });
+    const sets = {}; edSets.forEach(s => { const list = s.ejercicios.filter(e => e.ejercicio.trim()).map((e, i) => ({ ejercicio: e.ejercicio.trim(), duracion: e.duracion, orden: i + 1 })); if (list.length) sets[s.nombre] = list; });
+    if (esNueva) rutinas.push({ id, nombre, sets }); else { const idx = rutinas.findIndex(r => r.nombre === nombre); if (idx > -1) rutinas[idx].sets = sets; }
+    renderHome(); toast('✅ Rutina guardada'); setTimeout(() => navTo('screen-home'), 700);
+  } catch (e) { toast('❌ Error: ' + e.message); }
 }
-
 async function eliminarRutina() {
-  const nombre = document.getElementById('editorRutinaSelect').value;
+  const nombre = document.getElementById('edSelect').value;
   if (!confirm(`¿Eliminar la rutina "${nombre}"?`)) return;
-  try {
-    await apiFetch('eliminarRutina', 'POST', { nombre });
-    rutinas = rutinas.filter(r => r.nombre !== nombre);
-    renderHome();
-    prepEditor();
-    showToast('🗑 Rutina eliminada');
-  } catch(e) {
-    showToast('❌ Error: ' + e.message);
-  }
+  try { await api('eliminarRutina', 'POST', { nombre }); rutinas = rutinas.filter(r => r.nombre !== nombre); renderHome(); prepEditor(); toast('🗑 Rutina eliminada'); }
+  catch (e) { toast('❌ Error: ' + e.message); }
 }
 
-// ══════════ HELPERS ══════════
+function fmt(s) { return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 function calcRacha() {
-  if (entrenamientos.length === 0) return 0;
+  if (!entrenamientos.length) return 0;
   const fechas = [...new Set(entrenamientos.map(e => e.fecha))].sort().reverse();
-  const hoy = new Date().toISOString().split('T')[0];
-  let racha = 0, check = hoy;
-  for (const f of fechas) {
-    if (f === check) {
-      racha++;
-      const d = new Date(check + 'T12:00:00');
-      d.setDate(d.getDate() - 1);
-      check = d.toISOString().split('T')[0];
-    } else break;
-  }
+  let racha = 0, check = new Date().toISOString().split('T')[0];
+  for (const f of fechas) { if (f === check) { racha++; const d = new Date(check + 'T12:00:00'); d.setDate(d.getDate() - 1); check = d.toISOString().split('T')[0]; } else break; }
   return racha;
 }
+function isoWeek(d) { const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); x.setUTCDate(x.getUTCDate() + 4 - (x.getUTCDay() || 7)); const ys = new Date(Date.UTC(x.getUTCFullYear(), 0, 1)); return Math.ceil((((x - ys) / 86400000) + 1) / 7); }
+function sameWeek(a, b) { return isoWeek(a) === isoWeek(b) && a.getFullYear() === b.getFullYear(); }
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
 
-function getISOWeek(d) {
-  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-// ══════════ START ══════════
 init();
 </script>
 </body>

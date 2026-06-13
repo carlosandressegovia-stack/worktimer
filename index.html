@@ -47,7 +47,7 @@
 html,body{height:100%}
 body{
   font-family:var(--font);color:var(--ink);
-  background:#eef3f9;overflow:hidden;
+  background:#eef3f9;overflow:hidden;min-width:320px;
   -webkit-font-smoothing:antialiased;
   transition:background .9s ease;
 }
@@ -253,7 +253,7 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 /* ════ NAV FLOTANTE con brillo deslizante ════ */
 .dock{position:fixed;bottom:0;left:0;right:0;padding:0 16px calc(16px + env(safe-area-inset-bottom));z-index:50;pointer-events:none}
 .dock .bar{pointer-events:auto;position:relative;max-width:440px;margin:0 auto;background:rgba(255,255,255,.55);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--rim);box-shadow:var(--shadow-hi);border-radius:28px;display:flex;padding:8px}
-.dock .glow{position:absolute;top:8px;bottom:8px;width:calc(25% - 4px);border-radius:21px;background:linear-gradient(135deg,rgba(103,107,229,.22),rgba(103,107,229,.12));border:1px solid rgba(103,107,229,.3);transition:transform .35s cubic-bezier(.3,.8,.3,1);z-index:0}
+.dock .glow{position:absolute;top:8px;bottom:8px;width:calc(33.333% - 5px);border-radius:21px;background:linear-gradient(135deg,rgba(103,107,229,.22),rgba(103,107,229,.12));border:1px solid rgba(103,107,229,.3);transition:transform .35s cubic-bezier(.3,.8,.3,1);z-index:0}
 body[data-mood="rest"] .dock .glow{background:linear-gradient(135deg,rgba(103,107,229,.22),rgba(103,107,229,.12));border-color:rgba(103,107,229,.3)}
 .dock .nav-item{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:21px;cursor:pointer;color:var(--ink-faint);transition:color .25s;user-select:none}
 .dock .nav-item svg{width:22px;height:22px}
@@ -286,6 +286,26 @@ body[data-mood="rest"] .dock .glow{background:linear-gradient(135deg,rgba(103,10
 .spin{width:32px;height:32px;border:3px solid rgba(11,18,32,.12);border-top-color:var(--emerald);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+
+/* ════ AJUSTES UX / MOBILE v2 ════ */
+.rcard{position:relative;padding-right:10px}
+.rcard .info{padding-right:4px}
+.rcard .acts{display:flex;align-items:center;gap:7px;position:relative;z-index:2}
+.mini{width:36px;height:36px;border-radius:50%;border:1px solid var(--rim);background:rgba(255,255,255,.55);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(11,18,32,.07)}
+.mini svg{width:17px;height:17px}.mini.del{color:var(--danger);border-color:rgba(239,68,68,.22);background:rgba(239,68,68,.08)}
+.rounds{display:flex;align-items:center;gap:8px;background:rgba(103,107,229,.1);border:1px solid rgba(103,107,229,.22);border-radius:13px;padding:8px 10px;margin-bottom:10px;position:relative;z-index:1}
+.rounds label{font-size:12px;font-weight:700;color:var(--emerald-dk);white-space:nowrap}.rounds input{width:64px;text-align:center;padding:8px 10px}
+.timer-live{display:none;margin:0 18px 12px;padding:11px 14px;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;color:var(--emerald-dk)}
+.timer-live.show{display:flex}.timer-live button{border:0;background:linear-gradient(135deg,var(--emerald),var(--emerald-dk));color:#fff;border-radius:12px;padding:8px 12px;font-weight:700;cursor:pointer}
+@media (max-width:480px){
+  .top{padding-left:16px;padding-right:16px}.top h1{font-size:24px}.body{padding-left:14px;padding-right:14px;padding-bottom:112px}
+  .hero{padding:20px}.hero .q{font-size:23px}.lens{width:min(86vw,292px);margin-top:0}.lens .ring{-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 15px),#000 calc(100% - 14px));mask:radial-gradient(farthest-side,transparent calc(100% - 15px),#000 calc(100% - 14px))}
+  .count{font-size:clamp(48px,18vw,66px)}.ctrls{gap:15px}.cbtn{width:54px;height:54px}.cbtn.go{width:76px;height:76px}
+  .rcard{gap:11px;padding:13px}.rcard .em{width:44px;height:44px}.rcard .nm{font-size:15.5px}.rcard .mt{font-size:12px}.mini{width:34px;height:34px}.rcard .go{width:34px;height:34px}
+  .dock{padding-left:10px;padding-right:10px}.dock .bar{border-radius:24px}.dock .nav-item .nav-label{font-size:9.5px}
+  .erow{display:grid;grid-template-columns:1fr 72px 34px}.erow .inp.dur{width:72px}.eact{position:sticky;bottom:96px;background:rgba(238,243,249,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:8px 0 2px;z-index:10}
+}
+
 @media (min-width:900px){
   .rail{display:flex}.dock{display:none}
   .top{padding-top:30px}.body{padding-bottom:44px}
@@ -316,7 +336,6 @@ body[data-mood="rest"] .dock .glow{background:linear-gradient(135deg,rgba(103,10
     <div class="nav-item active" data-target="screen-home" onclick="navTo('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Inicio</span></div>
     <div class="nav-item" data-target="screen-historial" onclick="navTo('screen-historial')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="nav-label">Historial</span></div>
     <div class="nav-item" data-target="screen-calendario" onclick="navTo('screen-calendario')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Calendario</span></div>
-    <div class="nav-item" data-target="screen-editor" onclick="navTo('screen-editor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span class="nav-label">Editor</span></div>
   </aside>
 
   <div class="main"><div class="inner">
@@ -324,8 +343,9 @@ body[data-mood="rest"] .dock .glow{background:linear-gradient(135deg,rgba(103,10
     <div class="screen active" id="screen-home">
       <div class="top">
         <div><h1>Workout Timer</h1><div class="sub" id="homeSub">Listo para entrenar</div></div>
-        <button class="ib" onclick="navTo('screen-editor')" aria-label="Nueva rutina"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="ib" onclick="abrirNuevaRutina()" aria-label="Nueva rutina"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </div>
+      <div class="glass timer-live" id="timerLive"><span id="timerLiveTxt">Entrenamiento en curso</span><button onclick="volverAlTimer()">Volver</button></div>
       <div class="body">
         <div class="glass hero">
           <div class="hi">Hola 👋</div>
@@ -417,7 +437,6 @@ body[data-mood="rest"] .dock .glow{background:linear-gradient(135deg,rgba(103,10
       <div class="nav-item active" data-target="screen-home" onclick="navTo('screen-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Inicio</span></div>
       <div class="nav-item" data-target="screen-historial" onclick="navTo('screen-historial')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="nav-label">Historial</span></div>
       <div class="nav-item" data-target="screen-calendario" onclick="navTo('screen-calendario')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Calendario</span></div>
-      <div class="nav-item" data-target="screen-editor" onclick="navTo('screen-editor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span class="nav-label">Editor</span></div>
     </div>
   </nav>
 </div>
@@ -434,10 +453,10 @@ body[data-mood="rest"] .dock .glow{background:linear-gradient(135deg,rgba(103,10
 
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyX0a0SYzFJoRysSGNbrXZ70zUv6UMQI-GiLrCCfwRbPu_jGartBQ0VZrVIP5gJ7gGQeQ/exec';
-const NAV=['screen-home','screen-historial','screen-calendario','screen-editor'];
+const NAV=['screen-home','screen-historial','screen-calendario'];
 
 let rutinas=[],entrenamientos=[];
-let tRutina=null,tEjs=[],tIdx=0,tTotal=0,tRest=0,tInterval=null,tPlaying=false,tElapsed=0;
+let tRutina=null,tEjs=[],tIdx=0,tTotal=0,tRest=0,tInterval=null,tPlaying=false,tElapsed=0,tStartedAt=0,tRemainingAtStart=0,tLastWarn=0,tHadActive=false;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let audioCtx=null,audioUnlocked=false,wakeLock=null;
 
@@ -445,7 +464,7 @@ async function init(){
   try{
     const [r,e]=await Promise.all([api('getRutinas'),api('getEntrenamientos')]);
     rutinas=r.rutinas||[];entrenamientos=e.entrenamientos||[];
-    renderHome();document.getElementById('load').style.display='none';
+    restoreTimerState();renderHome();document.getElementById('load').style.display='none';
   }catch(err){
     document.getElementById('load').innerHTML=`<div style="text-align:center;padding:40px;color:var(--ink)"><div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:18px;font-weight:600;margin-bottom:6px">Sin conexión</div><div style="font-size:13px;color:var(--ink-soft)">Revisá el Apps Script y reintentá</div><button onclick="location.reload()" style="margin-top:20px;padding:11px 26px;border-radius:18px;border:none;background:#676be5;color:#fff;font-weight:600;cursor:pointer;font-family:inherit">Reintentar</button></div>`;
   }
@@ -466,7 +485,7 @@ function setMood(m){document.body.dataset.mood=m;
 function setVar(k,v){document.documentElement.style.setProperty(k,v);}
 
 function navTo(id){
-  if(id!=='screen-timer'){salirTimerSilent();setMood('idle');}
+  if(id!=='screen-timer'&&!tPlaying)setMood('idle');
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.target===id));
@@ -485,42 +504,45 @@ function renderHome(){
   document.getElementById('semanaTxt').textContent=`${sem} esta semana`;
   document.getElementById('homeSub').textContent=entrenamientos.length?`Último: ${entrenamientos[entrenamientos.length-1].rutina}`:'Tu primera sesión te espera';
   const list=document.getElementById('rutinasList');
+  updateLiveBanner();
   if(!rutinas.length){list.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>No hay rutinas aún.<br>Creá una en el Editor ✏️</p></div>`;return;}
+  updateLiveBanner();
   list.innerHTML=rutinas.map(r=>{
-    const ejs=Object.values(r.sets).flat();const dur=ejs.reduce((a,e)=>a+e.duracion,0);const nSets=Object.keys(r.sets).length;
-    return `<div class="glass rcard" onclick="iniciarRutina('${esc(r.nombre)}')"><div class="em">💪</div><div class="info"><div class="nm">${esc(r.nombre)}</div><div class="mt">${nSets} set${nSets>1?'s':''} · ${ejs.length} ejercicios · ${Math.ceil(dur/60)} min</div></div><div class="go"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div></div>`;
+    const ejs=Object.values(r.sets).flat();const dur=ejs.reduce((a,e)=>a+Number(e.duracion||0),0);const nSets=Object.keys(r.sets).length;const rn=encodeURIComponent(r.nombre);
+    return `<div class="glass rcard" onclick="iniciarRutina(decodeURIComponent('${rn}'))"><div class="em">💪</div><div class="info"><div class="nm">${esc(r.nombre)}</div><div class="mt">${nSets} set${nSets>1?'s':''} · ${ejs.length} ejercicios · ${Math.ceil(dur/60)} min</div></div><div class="acts"><button class="mini" onclick="editarRutina(decodeURIComponent('${rn}'),event)" aria-label="Editar rutina"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button><button class="mini del" onclick="confirmarEliminarRutina(decodeURIComponent('${rn}'),event)" aria-label="Eliminar rutina"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button><div class="go"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div></div></div>`;
   }).join('');
 }
 
 function iniciarRutina(nombre){
   tRutina=rutinas.find(r=>r.nombre===nombre);if(!tRutina)return;
-  tEjs=[];Object.keys(tRutina.sets).sort().forEach(set=>tRutina.sets[set].forEach(ej=>tEjs.push({...ej,set})));
-  tIdx=0;tPlaying=false;tElapsed=0;clearInterval(tInterval);
+  tEjs=[];Object.keys(tRutina.sets).sort(setSort).forEach(set=>tRutina.sets[set].forEach(ej=>tEjs.push({...ej,set})));
+  tIdx=0;tPlaying=false;tElapsed=0;tStartedAt=0;tRemainingAtStart=0;tLastWarn=0;clearInterval(tInterval);clearTimerState();
   showScreen('screen-timer');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   renderTimer();
 }
 function renderTimer(){
   const ej=tEjs[tIdx];if(!ej)return;
   document.getElementById('tRutina').textContent=tRutina.nombre;
-  document.getElementById('tSet').textContent=ej.set;
-  tTotal=ej.duracion;tRest=ej.duracion;
-  const ring=document.getElementById('ring');ring.style.transition='none';ring.style.setProperty('--p',1);void ring.offsetWidth;ring.style.transition='';
+  document.getElementById('tSet').textContent=ej.set||`Set ${tIdx+1}`;
+  tTotal=Number(ej.duracion)||1;if(!tRest||tRest>tTotal)tRest=tTotal;
+  const ring=document.getElementById('ring');ring.style.transition='none';ring.style.setProperty('--p',Math.max(0,Math.min(1,tRest/tTotal)));void ring.offsetWidth;ring.style.transition='';
   drawTimer();drawQueue();drawProgress();
   const sig=tEjs[tIdx+1];
   document.getElementById('tNext').textContent=sig?sig.ejercicio:'¡Último!';
   document.getElementById('tNextDur').textContent=sig?sig.duracion+'s':'';
+  saveTimerState();updateLiveBanner();
 }
 function isRest(n){n=(n||'').toLowerCase();return n.includes('rest')||n.includes('descanso')||n.includes('pausa');}
 function drawTimer(){
   const ej=tEjs[tIdx],rest=isRest(ej.ejercicio);
   setMood(rest?'rest':'work');
-  document.getElementById('tCount').textContent=fmt(tRest);
+  document.getElementById('tCount').textContent=fmt(Math.max(0,tRest));
   document.getElementById('tEjName').textContent=ej.ejercicio;
   const tag=document.getElementById('tTag');tag.textContent=rest?'Descanso':'Ejercicio';tag.className='tag'+(rest?' rest':'');
-  document.getElementById('ring').style.setProperty('--p',tRest/tTotal);
+  document.getElementById('ring').style.setProperty('--p',Math.max(0,Math.min(1,tRest/tTotal)));
 }
 function drawProgress(){
-  const pct=Math.round((tIdx/tEjs.length)*100);
+  const pct=Math.round(((tIdx+1)/Math.max(1,tEjs.length))*100);
   document.getElementById('progLbl').textContent=`Ejercicio ${tIdx+1} / ${tEjs.length}`;
   document.getElementById('progPct').textContent=pct+'%';
   document.getElementById('progFill').style.width=pct+'%';
@@ -533,28 +555,69 @@ function drawQueue(){
     return `<div class="qi ${cls}"><div class="qd ${dot}"></div><div class="qn">${esc(e.ejercicio)}</div><div class="qt">${e.duracion}s</div></div>`;
   }).join('');
 }
+function elapsedSoFar(){return tEjs.slice(0,tIdx).reduce((a,e)=>a+Number(e.duracion||0),0)+(Number(tTotal||0)-Number(tRest||0));}
 function togglePlay(){unlockAudio();tPlaying?pausar():reproducir();}
 function reproducir(){
-  tPlaying=true;document.getElementById('icoPlay').style.display='none';document.getElementById('icoPause').style.display='block';requestWake();
+  if(!tRutina||!tEjs.length)return;
+  clearInterval(tInterval);tPlaying=true;tLastWarn=0;tHadActive=true;
+  document.getElementById('icoPlay').style.display='none';document.getElementById('icoPause').style.display='block';requestWake();
   if(tRest===tEjs[tIdx].duracion)hablar(tEjs[tIdx].ejercicio);
-  tInterval=setInterval(()=>{if(tRest>0){tRest--;tElapsed++;drawTimer();if(tRest<=3&&tRest>0)beep(tRest===1?880:660,100);}else nextEj();},1000);
+  tStartedAt=Date.now();tRemainingAtStart=tRest;saveTimerState();
+  tickTimer();tInterval=setInterval(tickTimer,250);
 }
-function pausar(){tPlaying=false;clearInterval(tInterval);document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';releaseWake();}
+function tickTimer(){
+  if(!tPlaying||!tEjs[tIdx])return;
+  const elapsed=Math.floor((Date.now()-tStartedAt)/1000);
+  if(elapsed<tRemainingAtStart){
+    const nr=tRemainingAtStart-elapsed;
+    if(nr!==tRest){tRest=nr;drawTimer();drawProgress();saveTimerState();if(tRest<=3&&tRest>0&&tLastWarn!==tRest){tLastWarn=tRest;beep(tRest===1?980:720,115);vibrate([70]);}}
+    return;
+  }
+  const over=elapsed-tRemainingAtStart;
+  if(tIdx<tEjs.length-1){
+    tIdx++;tRest=Number(tEjs[tIdx].duracion)||1;renderTimer();beep(1047,140);vibrate([55,35,55]);
+    if(document.visibilityState==='visible')hablar(`${tEjs[tIdx].ejercicio}, ${tEjs[tIdx].duracion} segundos`);
+    tStartedAt=Date.now()-over*1000;tRemainingAtStart=tRest;tLastWarn=0;saveTimerState();
+    if(over>0)tickTimer();
+  }else finalizarTimer();
+}
+function pausar(){
+  if(tPlaying)tickTimer();
+  tPlaying=false;clearInterval(tInterval);document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';releaseWake();saveTimerState();updateLiveBanner();
+}
 function nextEj(){
   clearInterval(tInterval);tPlaying=false;document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';
-  if(tIdx<tEjs.length-1){tIdx++;renderTimer();beep(1047,150);setTimeout(()=>{hablar(`${tEjs[tIdx].ejercicio}, ${tEjs[tIdx].duracion} segundos`);reproducir();},550);}
-  else{[0,250,500].forEach((d,i)=>setTimeout(()=>beep([1047,1319,1568][i],i===2?380:180),d));hablar('¡Entrenamiento completado! Muy bien.');releaseWake();mostrarFinish();}
+  if(tIdx<tEjs.length-1){tIdx++;tRest=Number(tEjs[tIdx].duracion)||1;renderTimer();beep(1047,150);vibrate([55,35,55]);setTimeout(()=>{hablar(`${tEjs[tIdx].ejercicio}, ${tEjs[tIdx].duracion} segundos`);reproducir();},400);}
+  else finalizarTimer();
 }
-function prevEj(){clearInterval(tInterval);tPlaying=false;document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';if(tIdx>0){tIdx--;renderTimer();}}
+function prevEj(){clearInterval(tInterval);tPlaying=false;document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';if(tIdx>0){tIdx--;tRest=Number(tEjs[tIdx].duracion)||1;renderTimer();}}
+function finalizarTimer(){clearInterval(tInterval);tPlaying=false;tElapsed=elapsedSoFar();[0,250,500].forEach((d,i)=>setTimeout(()=>beep([1047,1319,1568][i],i===2?380:180),d));vibrate([120,80,120,80,220]);hablar('¡Entrenamiento completado! Muy bien.');releaseWake();clearTimerState();tHadActive=false;mostrarFinish();updateLiveBanner();}
 function salirTimer(){pausar();navTo('screen-home');}
-function salirTimerSilent(){if(tInterval){clearInterval(tInterval);tPlaying=false;releaseWake();document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';}}
-
+function salirTimerSilent(){if(tInterval){clearInterval(tInterval);tPlaying=false;releaseWake();document.getElementById('icoPlay').style.display='block';document.getElementById('icoPause').style.display='none';saveTimerState();}}
 function unlockAudio(){if(audioUnlocked)return;try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();if(window.speechSynthesis){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}audioUnlocked=true;}
 function hablar(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-AR';u.rate=.98;u.pitch=1;speechSynthesis.speak(u);}
 function beep(f=880,d=150){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.28,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d/1000);o.start();o.stop(audioCtx.currentTime+d/1000);}catch(e){}}
+function vibrate(pattern=70){try{if('vibrate'in navigator)navigator.vibrate(pattern);}catch(e){}}
 async function requestWake(){try{if('wakeLock'in navigator)wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
 function releaseWake(){try{if(wakeLock){wakeLock.release();wakeLock=null;}}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&tPlaying)requestWake();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&tPlaying){requestWake();tickTimer();}else if(document.visibilityState==='hidden'&&tPlaying){saveTimerState();}});
+
+
+function saveTimerState(){
+  try{if(!tRutina)return;localStorage.setItem('wt_active',JSON.stringify({rutina:tRutina.nombre,idx:tIdx,rest:tRest,playing:tPlaying,startedAt:tStartedAt,remainingAtStart:tRemainingAtStart,ts:Date.now()}));}catch(e){}
+}
+function clearTimerState(){try{localStorage.removeItem('wt_active');}catch(e){}}
+function restoreTimerState(){
+  try{const raw=localStorage.getItem('wt_active');if(!raw)return;const st=JSON.parse(raw);const r=rutinas.find(x=>x.nombre===st.rutina);if(!r)return;tRutina=r;tEjs=[];Object.keys(r.sets).sort(setSort).forEach(set=>r.sets[set].forEach(ej=>tEjs.push({...ej,set})));tIdx=Math.min(st.idx||0,tEjs.length-1);tRest=Number(st.rest)||Number(tEjs[tIdx]?.duracion)||1;tPlaying=false;tHadActive=true;updateLiveBanner();}catch(e){}
+}
+function updateLiveBanner(){
+  const bar=document.getElementById('timerLive');if(!bar)return;const active=!!(tRutina&&tEjs.length&&(tPlaying||tHadActive||localStorage.getItem('wt_active')));bar.classList.toggle('show',active);if(active)document.getElementById('timerLiveTxt').textContent=`${tPlaying?'En curso':'Pausado'} · ${tRutina.nombre} · ${fmt(Math.max(0,tRest||0))}`;
+}
+function volverAlTimer(){if(!tRutina||!tEjs.length)restoreTimerState();if(!tRutina)return;showScreen('screen-timer');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));renderTimer();}
+function setSort(a,b){return (parseInt(a.match(/\d+/)?.[0]||0)-parseInt(b.match(/\d+/)?.[0]||0))||a.localeCompare(b);}
+function abrirNuevaRutina(){navTo('screen-editor');setTimeout(()=>{document.getElementById('edSelect').value='__nueva__';loadEnEditor();},0);}
+function editarRutina(nombre,ev){if(ev)ev.stopPropagation();navTo('screen-editor');setTimeout(()=>{const sel=document.getElementById('edSelect');sel.value=nombre;loadEnEditor();},0);}
+function confirmarEliminarRutina(nombre,ev){if(ev)ev.stopPropagation();if(!confirm(`¿Eliminar la rutina "${nombre}"?`))return;eliminarRutinaPorNombre(nombre);}
 
 function mostrarFinish(){document.getElementById('fDur').textContent=fmt(tElapsed);document.getElementById('fRutina').textContent=tRutina.nombre;document.getElementById('fNote').value='';document.getElementById('finishOverlay').classList.add('open');}
 function cerrarFinish(){document.getElementById('finishOverlay').classList.remove('open');navTo('screen-home');}
@@ -606,39 +669,48 @@ let edSets=[];
 function prepEditor(){const sel=document.getElementById('edSelect');sel.innerHTML='<option value="__nueva__">+ Nueva rutina</option>'+rutinas.map(r=>`<option value="${esc(r.nombre)}">${esc(r.nombre)}</option>`).join('');sel.value='__nueva__';loadEnEditor();}
 function loadEnEditor(){
   const val=document.getElementById('edSelect').value,wrap=document.getElementById('edNombreWrap'),btn=document.getElementById('btnDel');
-  if(val==='__nueva__'){wrap.style.display='block';document.getElementById('edNombre').value='';btn.style.display='none';renderSets([{nombre:'Set 1',ejercicios:[{ejercicio:'',duracion:40}]}]);}
-  else{wrap.style.display='none';btn.style.display='block';const r=rutinas.find(x=>x.nombre===val);renderSets(Object.keys(r.sets).sort().map(s=>({nombre:s,ejercicios:r.sets[s].map(e=>({ejercicio:e.ejercicio,duracion:e.duracion}))})));}
+  if(val==='__nueva__'){wrap.style.display='block';document.getElementById('edNombre').value='';btn.style.display='none';renderSets([{nombre:'Set 1',vueltas:1,ejercicios:[{ejercicio:'',duracion:40}]}]);}
+  else{wrap.style.display='none';btn.style.display='block';const r=rutinas.find(x=>x.nombre===val);renderSets(Object.keys(r.sets).sort(setSort).map(s=>({nombre:s,vueltas:1,ejercicios:r.sets[s].map(e=>({ejercicio:e.ejercicio,duracion:e.duracion}))})));}
 }
 function renderSets(sets){edSets=sets;redrawSets();}
 function redrawSets(){
   document.getElementById('edSets').innerHTML=edSets.map((set,si)=>{
     const ejs=set.ejercicios.map((e,ei)=>`<div class="erow"><input class="inp" placeholder="Ejercicio" value="${esc(e.ejercicio)}" oninput="edSets[${si}].ejercicios[${ei}].ejercicio=this.value"><input class="inp dur" type="number" min="1" value="${e.duracion}" oninput="edSets[${si}].ejercicios[${ei}].duracion=Number(this.value)"><button class="edel" onclick="delEj(${si},${ei})" aria-label="Eliminar">✕</button></div>`).join('');
-    return `<div class="glass sblock"><div class="shead"><div class="stitle">${esc(set.nombre)}</div><button class="sdel" onclick="delSet(${si})">Eliminar</button></div>${ejs}<button class="adde" onclick="addEj(${si})">+ Ejercicio</button></div>`;
+    return `<div class="glass sblock"><div class="shead"><div class="stitle">${esc(set.nombre)}</div><button class="sdel" onclick="delSet(${si})">Eliminar</button></div><div class="rounds"><label>Repetir set x</label><input class="inp" type="number" min="1" max="20" value="${set.vueltas||1}" oninput="edSets[${si}].vueltas=Math.max(1,Number(this.value)||1)"></div>${ejs}<button class="adde" onclick="addEj(${si})">+ Ejercicio</button></div>`;
   }).join('');
 }
 function addEj(si){edSets[si].ejercicios.push({ejercicio:'',duracion:40});redrawSets();}
 function delEj(si,ei){edSets[si].ejercicios.splice(ei,1);redrawSets();}
-function addSet(){edSets.push({nombre:`Set ${edSets.length+1}`,ejercicios:[{ejercicio:'',duracion:40}]});redrawSets();}
+function addSet(){edSets.push({nombre:`Set ${edSets.length+1}`,vueltas:1,ejercicios:[{ejercicio:'',duracion:40}]});redrawSets();}
 function delSet(si){edSets.splice(si,1);edSets.forEach((s,i)=>s.nombre=`Set ${i+1}`);redrawSets();}
 async function guardarRutina(){
   const val=document.getElementById('edSelect').value,esNueva=val==='__nueva__';
   const nombre=esNueva?document.getElementById('edNombre').value.trim():val;
   if(!nombre)return toast('⚠️ Poné un nombre');
   const filas=[];const id=nombre.toLowerCase().replace(/\s+/g,'-')+'-001';let orden=1;
-  edSets.forEach(set=>set.ejercicios.forEach(ej=>{if(ej.ejercicio.trim())filas.push({id,nombre,set:set.nombre,ejercicio:ej.ejercicio.trim(),duracion:ej.duracion,orden:orden++});}));
+  edSets.forEach(set=>{
+    const vueltas=Math.max(1,Number(set.vueltas)||1);
+    for(let v=1;v<=vueltas;v++){
+      const setName=vueltas>1?`${set.nombre} · vuelta ${v}/${vueltas}`:set.nombre;
+      set.ejercicios.forEach(ej=>{if(ej.ejercicio.trim())filas.push({id,nombre,set:setName,ejercicio:ej.ejercicio.trim(),duracion:Number(ej.duracion)||1,orden:orden++});});
+    }
+  });
   if(!filas.length)return toast('⚠️ Agregá al menos un ejercicio');
   try{await api('guardarRutina','POST',{filas,nombre,esNueva});
-    const sets={};edSets.forEach(s=>{const list=s.ejercicios.filter(e=>e.ejercicio.trim()).map((e,i)=>({ejercicio:e.ejercicio.trim(),duracion:e.duracion,orden:i+1}));if(list.length)sets[s.nombre]=list;});
+    const sets={};filas.forEach((f,i)=>{(sets[f.set]=sets[f.set]||[]).push({ejercicio:f.ejercicio,duracion:f.duracion,orden:i+1});});
     if(esNueva)rutinas.push({id,nombre,sets});else{const idx=rutinas.findIndex(r=>r.nombre===nombre);if(idx>-1)rutinas[idx].sets=sets;}
     renderHome();toast('✅ Rutina guardada');setTimeout(()=>navTo('screen-home'),700);
   }catch(e){toast('❌ Error: '+e.message);}
 }
+async function eliminarRutinaPorNombre(nombre){
+  try{await api('eliminarRutina','POST',{nombre});rutinas=rutinas.filter(r=>r.nombre!==nombre);if(tRutina?.nombre===nombre){pausar();tRutina=null;tEjs=[];clearTimerState();tHadActive=false;}renderHome();prepEditor();toast('🗑 Rutina eliminada');}catch(e){toast('❌ Error: '+e.message);}
+}
 async function eliminarRutina(){
   const nombre=document.getElementById('edSelect').value;if(!confirm(`¿Eliminar la rutina "${nombre}"?`))return;
-  try{await api('eliminarRutina','POST',{nombre});rutinas=rutinas.filter(r=>r.nombre!==nombre);renderHome();prepEditor();toast('🗑 Rutina eliminada');}catch(e){toast('❌ Error: '+e.message);}
+  eliminarRutinaPorNombre(nombre);
 }
 
-function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function fmt(s){s=Math.max(0,Math.floor(Number(s)||0));return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function calcRacha(){if(!entrenamientos.length)return 0;const fechas=[...new Set(entrenamientos.map(e=>e.fecha))].sort().reverse();let racha=0,check=new Date().toISOString().split('T')[0];for(const f of fechas){if(f===check){racha++;const d=new Date(check+'T12:00:00');d.setDate(d.getDate()-1);check=d.toISOString().split('T')[0];}else break;}return racha;}
 function isoWeek(d){const x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));x.setUTCDate(x.getUTCDate()+4-(x.getUTCDay()||7));const ys=new Date(Date.UTC(x.getUTCFullYear(),0,1));return Math.ceil((((x-ys)/86400000)+1)/7);}
